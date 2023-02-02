@@ -11,8 +11,8 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from 'src/utils/users/user.service';
-import { UserEntity } from 'src/utils/users/user.entity';
+import { UserService } from 'src/utils/services/user.service';
+import { UserEntity } from 'src/utils/services/user.entity';
 import EntityController from '../entity.controller';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 

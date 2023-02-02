@@ -24,25 +24,25 @@ export abstract class EntityService<TEntity extends Entity, CreateEntityDto, Upd
   }
 
   async get(id: string): Promise<TEntity> {
-    const resultIndex = this.entities.findIndex((user) => user.id === id);
+    const resultIndex = this.entities.findIndex((entity) => entity.id === id);
     if (resultIndex === -1)
       throw new NotFound(Operation.get, idNotFound(this.entityName, id));
     return this.entities[resultIndex];
   }
 
-  abstract create(userDto: CreateEntityDto): Promise<TEntity>;
+  abstract create(entityDto: CreateEntityDto): Promise<TEntity>;
 
-  async update(id: string, userDto: UpdateEntityDto): Promise<TEntity> {
-    const index = this.entities.findIndex((user) => user.id === id);
+  async update(id: string, entityDto: UpdateEntityDto): Promise<TEntity> {
+    const index = this.entities.findIndex((entity) => entity.id === id);
     if (index === -1)
       throw new NotFound(Operation.update, idNotFound(this.entityName, id));
-    const user = this.entities[index];
-    Object.assign(user, userDto);
-    return user;
+    const entity = this.entities[index];
+    Object.assign(entity, entityDto);
+    return entity;
   }
 
   async delete(id: string) {
-    const index = this.entities.findIndex((user) => user.id === id);
+    const index = this.entities.findIndex((entity) => entity.id === id);
     if (index === -1)
       throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
     this.entities.splice(index, 1);

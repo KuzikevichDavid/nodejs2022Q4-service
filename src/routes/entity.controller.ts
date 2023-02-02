@@ -17,8 +17,8 @@ import {
 import { BadRequest } from 'src/utils/errors/badRequest.error';
 import { Forbidden } from 'src/utils/errors/forbidden.error';
 import { NotFound } from 'src/utils/errors/notFound.error';
-import { Entity } from 'src/utils/users/entity';
-import { EntityService } from 'src/utils/users/entity.service';
+import { Entity } from 'src/utils/services/entity';
+import { EntityService } from 'src/utils/services/entity.service';
 import { CreateUserDto, UpdateUserDto } from './user/user.dto';
 
 @Controller()
