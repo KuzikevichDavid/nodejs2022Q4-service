@@ -1,11 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { CreateUserDto, UpdateUserDto } from "src/routes/user/user.dto";
-import { Forbidden } from "../errors/forbidden.error";
-import { NotFound } from "../errors/notFound.error";
-import { genId } from "../idUtils";
-import { idNotFound } from "../replyMessages";
-import { Entity } from "./entity";
-import { UserEntity } from "./user.entity";
+import { Injectable } from '@nestjs/common';
+import { NotFound } from '../errors/notFound.error';
+import { idNotFound } from '../replyMessages';
+import { Entity } from './entity';
 
 export enum Operation {
   get = 'get by id',
@@ -14,14 +10,22 @@ export enum Operation {
 }
 
 @Injectable()
-export abstract class EntityService<TEntity extends Entity, CreateEntityDto, UpdateEntityDto> {
-  constructor(protected entityName: string) { }
+export abstract class EntityService<
+  TEntity extends Entity,
+  CreateEntityDto,
+  UpdateEntityDto,
+> {
+  protected constructor(protected entityName: string) {}
 
   protected entities: TEntity[] = [];
 
   async getAll(): Promise<TEntity[]> {
     return this.entities;
   }
+
+  /* async getMany(): Promise<TEntity[]> {
+    return this.entities.filter()
+  }*/
 
   async get(id: string): Promise<TEntity> {
     const resultIndex = this.entities.findIndex((entity) => entity.id === id);
@@ -30,7 +34,14 @@ export abstract class EntityService<TEntity extends Entity, CreateEntityDto, Upd
     return this.entities[resultIndex];
   }
 
-  abstract create(entityDto: CreateEntityDto): Promise<TEntity>;
+  abstract create(entityDto: CreateEntityDto): Promise<TEntity>; /*{
+    const entity: TEntity = {
+      ...entityDto,
+      id: genId(),
+    };
+    this.entities.push(entity);
+    return entity;
+  }*/
 
   async update(id: string, entityDto: UpdateEntityDto): Promise<TEntity> {
     const index = this.entities.findIndex((entity) => entity.id === id);

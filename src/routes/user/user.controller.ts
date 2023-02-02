@@ -1,15 +1,10 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
-  Delete,
-  Get,
-  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from 'src/utils/services/user.service';
 import { UserEntity } from 'src/utils/services/user.entity';
@@ -17,14 +12,18 @@ import EntityController from '../entity.controller';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Controller('user')
-export class UserController extends EntityController<UserEntity, CreateUserDto, UpdateUserDto> {
+export class UserController extends EntityController<
+  UserEntity,
+  CreateUserDto,
+  UpdateUserDto
+> {
   constructor(service: UserService) {
     super(service);
   }
 
   @Post()
   async create(@Body() createDto: CreateUserDto) {
-    return this.service.create(createDto).catch(this.exceptionHandler);;
+    return this.service.create(createDto).catch(this.exceptionHandler);
   }
 
   @Put(':id')

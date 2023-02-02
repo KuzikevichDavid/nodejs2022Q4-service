@@ -2,14 +2,11 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
-  Body,
   Delete,
   Get,
   HttpCode,
   Param,
   ParseUUIDPipe,
-  Post,
-  Put,
   ClassSerializerInterceptor,
   UseInterceptors,
   Controller,
@@ -19,13 +16,17 @@ import { Forbidden } from 'src/utils/errors/forbidden.error';
 import { NotFound } from 'src/utils/errors/notFound.error';
 import { Entity } from 'src/utils/services/entity';
 import { EntityService } from 'src/utils/services/entity.service';
-import { CreateUserDto, UpdateUserDto } from './user/user.dto';
 
 @Controller()
 @UseInterceptors(ClassSerializerInterceptor)
-export default abstract class EntityController<TEntity extends Entity, CreateEntityDto, UpdateEntityDto> {
-  constructor(protected service: EntityService<TEntity, CreateEntityDto, UpdateEntityDto>) {
-  }
+export default abstract class EntityController<
+  TEntity extends Entity,
+  CreateEntityDto,
+  UpdateEntityDto,
+> {
+  constructor(
+    protected service: EntityService<TEntity, CreateEntityDto, UpdateEntityDto>,
+  ) {}
 
   @Get()
   async getAll() {
@@ -39,7 +40,7 @@ export default abstract class EntityController<TEntity extends Entity, CreateEnt
 
   abstract create(createDto: CreateEntityDto);
 
-  abstract update(id: string, updateDto: UpdateEntityDto)
+  abstract update(id: string, updateDto: UpdateEntityDto);
 
   @Delete(':id')
   @HttpCode(204)

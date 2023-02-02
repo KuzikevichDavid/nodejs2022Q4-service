@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/routes/user/user.dto';
 import { Forbidden } from '../errors/forbidden.error';
-import { NotFound } from '../errors/notFound.error';
 import { genId } from '../idUtils';
-import { idNotFound } from '../replyMessages';
 import { Operation, EntityService } from './entity.service';
 import { UserEntity } from './user.entity';
 
 @Injectable()
-export class UserService extends EntityService<UserEntity, CreateUserDto, UpdateUserDto> {
+export class UserService extends EntityService<
+  UserEntity,
+  CreateUserDto,
+  UpdateUserDto
+> {
   constructor() {
     super('user');
   }
-  //private entityName = 'user';
-  //private entities: UserEntity[] = [];
 
   async getAll(): Promise<UserEntity[]> {
     return this.entities;

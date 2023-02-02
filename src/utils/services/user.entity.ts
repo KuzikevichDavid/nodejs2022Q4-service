@@ -12,6 +12,6 @@ export class UserEntity extends Entity {
   updatedAt: number; // timestamp of last update
 
   constructor(partial: Partial<UserEntity>) {
-    super(partial)
+    super(partial);
   }
 }

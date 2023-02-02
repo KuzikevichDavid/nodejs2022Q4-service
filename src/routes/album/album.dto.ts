@@ -1,17 +1,13 @@
 import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class TrackDto {
+export class AlbumDto {
   @IsString()
   name: string;
 
   @IsNumber()
-  duration: number;
+  year: number;
 
   @IsOptional()
   @IsUUID()
-  artistId: string | null;
-
-  @IsOptional()
-  @IsUUID()
-  albumId: string | null;
+  artistId: string | null; // refers to Artist
 }
