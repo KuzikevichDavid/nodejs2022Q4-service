@@ -17,26 +17,14 @@ import EntityController from '../entity.controller';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Controller('user')
-@UseInterceptors(ClassSerializerInterceptor)
-export class UserController extends EntityController {
-  private users: UserEntity[] = [];
-  constructor(protected userService: UserService) {
-    super();
-  }
-
-  @Get()
-  async getAll() {
-    return this.userService.getAll();
-  }
-
-  @Get(':id')
-  async get(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.get(id).catch(this.exceptionHandler);
+export class UserController extends EntityController<UserEntity, CreateUserDto, UpdateUserDto> {
+  constructor(service: UserService) {
+    super(service);
   }
 
   @Post()
   async create(@Body() createDto: CreateUserDto) {
-    return this.userService.create(createDto).catch(this.exceptionHandler);
+    return this.service.create(createDto).catch(this.exceptionHandler);;
   }
 
   @Put(':id')
@@ -44,12 +32,6 @@ export class UserController extends EntityController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateDto).catch(this.exceptionHandler);
-  }
-
-  @Delete(':id')
-  @HttpCode(204)
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.delete(id).catch(this.exceptionHandler);
+    return this.service.update(id, updateDto).catch(this.exceptionHandler);
   }
 }

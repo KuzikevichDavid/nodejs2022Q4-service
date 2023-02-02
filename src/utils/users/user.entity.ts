@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
+import { Entity } from './entity';
 
-export class UserEntity {
-  id: string; // uuid v4
+export class UserEntity extends Entity {
   login: string;
 
   @Exclude()
@@ -12,6 +12,6 @@ export class UserEntity {
   updatedAt: number; // timestamp of last update
 
   constructor(partial: Partial<UserEntity>) {
-    Object.assign(this, partial);
+    super(partial)
   }
 }

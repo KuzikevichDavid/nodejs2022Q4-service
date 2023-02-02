@@ -4,28 +4,19 @@ import { Forbidden } from '../errors/forbidden.error';
 import { NotFound } from '../errors/notFound.error';
 import { genId } from '../idUtils';
 import { idNotFound } from '../replyMessages';
+import { Operation, EntityService } from './entity.service';
 import { UserEntity } from './user.entity';
 
-enum Operation {
-  get = 'get by id',
-  update = 'update',
-  delete = 'delete',
-}
-
 @Injectable()
-export class UserService {
-  private entityName = 'user';
-  private users: UserEntity[] = [];
+export class UserService extends EntityService<UserEntity, CreateUserDto, UpdateUserDto> {
+  constructor() {
+    super('user');
+  }
+  //private entityName = 'user';
+  //private entities: UserEntity[] = [];
 
   async getAll(): Promise<UserEntity[]> {
-    return this.users;
-  }
-
-  async get(id: string): Promise<UserEntity> {
-    const resultIndex = this.users.findIndex((user) => user.id === id);
-    if (resultIndex === -1)
-      throw new NotFound(Operation.get, idNotFound(this.entityName, id));
-    return this.users[resultIndex];
+    return this.entities;
   }
 
   async create(userDto: CreateUserDto): Promise<UserEntity> {
@@ -38,15 +29,12 @@ export class UserService {
       updatedAt: date,
       version: 1,
     });
-    this.users.push(user);
+    this.entities.push(user);
     return user;
   }
 
   async update(id: string, userDto: UpdateUserDto): Promise<UserEntity> {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1)
-      throw new NotFound(Operation.update, idNotFound(this.entityName, id));
-    const user = this.users[index];
+    const user = await this.get(id);
     if (userDto.oldPassword !== user.password) {
       throw new Forbidden(Operation.update, 'Old password not correct');
     }
@@ -54,12 +42,5 @@ export class UserService {
     user.version++;
     user.updatedAt = Date.now();
     return user;
-  }
-
-  async delete(id: string) {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1)
-      throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
-    this.users.splice(index, 1);
   }
 }
