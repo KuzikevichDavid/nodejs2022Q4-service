@@ -1,10 +1,6 @@
-import { OmitType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UserDto {
-  @IsUUID(4)
-  id: string;
-
+export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   login: string;
@@ -13,8 +9,6 @@ export class UserDto {
   @IsString()
   password: string;
 }
-
-export class CreateUserDto extends OmitType(UserDto, ['id'] as const) {}
 
 export class UpdateUserDto {
   @IsNotEmpty()

@@ -1,8 +1,14 @@
 {
   "name": "home-library",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "Home music library REST service",
+  "keywords": [
+    "Nestjs REST service",
+    "REST service",
+    "REST api",
+    "api"
+  ],
+  "author": "Davyd",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
