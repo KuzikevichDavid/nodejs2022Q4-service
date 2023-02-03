@@ -12,7 +12,7 @@ export class AlbumService extends EntityService<
   AlbumDto,
   AlbumDto
 > {
-  constructor(protected trackService: TrackService) {
+  constructor(protected readonly trackService: TrackService) {
     super('album');
   }
 

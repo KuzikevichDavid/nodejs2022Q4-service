@@ -12,7 +12,7 @@ export class ArtistService extends EntityService<
   ArtistDto,
   ArtistDto
 > {
-  constructor(protected trackService: TrackService) {
+  constructor(protected readonly trackService: TrackService) {
     super('artist');
   }
 

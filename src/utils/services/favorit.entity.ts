@@ -1,11 +1,11 @@
 import { Entity } from './entity';
 
-export class FavoritsEntity extends Entity {
+export class FavoritEntity extends Entity {
   artists: string[]; // favorite artists ids
   albums: string[]; // favorite albums ids
   tracks: string[]; // favorite tracks ids
 
-  constructor(partial: Partial<FavoritsEntity>) {
+  constructor(partial: Partial<FavoritEntity>) {
     super(partial);
   }
 }

@@ -9,7 +9,6 @@ import {
   ParseUUIDPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
-  Controller,
 } from '@nestjs/common';
 import { BadRequest } from 'src/utils/errors/badRequest.error';
 import { Forbidden } from 'src/utils/errors/forbidden.error';
@@ -25,7 +24,7 @@ export default abstract class EntityController<
 > {
   constructor(
     protected service: EntityService<TEntity, CreateEntityDto, UpdateEntityDto>,
-  ) { }
+  ) {}
 
   @Get()
   async getAll() {

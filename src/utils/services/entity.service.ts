@@ -13,13 +13,25 @@ export abstract class EntityService<
   CreateEntityDto,
   UpdateEntityDto,
 > {
-  protected constructor(protected entityName: string) { }
+  protected constructor(protected readonly entityName: string) {}
 
-  protected entities: TEntity[] = [];
+  protected readonly entities: TEntity[] = [];
 
   public async getMany(): Promise<TEntity[]>;
-  public async getMany(filterPredicate: (entity: TEntity, index: number, array: TEntity[]) => boolean): Promise<TEntity[]>;
-  public async getMany(filterPredicate?: (entity: TEntity, index: number, array: TEntity[]) => boolean): Promise<TEntity[]> {
+  public async getMany(
+    filterPredicate: (
+      entity: TEntity,
+      index: number,
+      array: TEntity[],
+    ) => boolean,
+  ): Promise<TEntity[]>;
+  public async getMany(
+    filterPredicate?: (
+      entity: TEntity,
+      index: number,
+      array: TEntity[],
+    ) => boolean,
+  ): Promise<TEntity[]> {
     if (!filterPredicate) {
       return this.entities;
     }
