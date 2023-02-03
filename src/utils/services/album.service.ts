@@ -3,6 +3,8 @@ import { AlbumDto } from '../../routes/album/album.dto';
 import { genId } from '../idUtils';
 import { AlbumEntity } from './album.entity';
 import { EntityService } from './entity.service';
+import { TrackEntity } from './track.entity';
+import { TrackService } from './track.service';
 
 @Injectable()
 export class AlbumService extends EntityService<
@@ -10,7 +12,7 @@ export class AlbumService extends EntityService<
   AlbumDto,
   AlbumDto
 > {
-  constructor() {
+  constructor(protected trackService: TrackService) {
     super('album');
   }
 
@@ -21,5 +23,15 @@ export class AlbumService extends EntityService<
     });
     this.entities.push(entity);
     return entity;
+  }
+
+  async delete(id: string): Promise<AlbumEntity> {
+    const deleted = await super.delete(id);
+    const predicate = (track: TrackEntity) => track.albumId === id;
+    for (const track of await this.trackService.getMany(predicate)) {
+      track.albumId = null;
+      this.trackService.update(track.id, track);
+    }
+    return deleted;
   }
 }

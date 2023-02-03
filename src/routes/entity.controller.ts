@@ -17,7 +17,6 @@ import { NotFound } from 'src/utils/errors/notFound.error';
 import { Entity } from 'src/utils/services/entity';
 import { EntityService } from 'src/utils/services/entity.service';
 
-@Controller()
 @UseInterceptors(ClassSerializerInterceptor)
 export default abstract class EntityController<
   TEntity extends Entity,
@@ -26,11 +25,11 @@ export default abstract class EntityController<
 > {
   constructor(
     protected service: EntityService<TEntity, CreateEntityDto, UpdateEntityDto>,
-  ) {}
+  ) { }
 
   @Get()
   async getAll() {
-    return this.service.getAll();
+    return this.service.getMany();
   }
 
   @Get(':id')

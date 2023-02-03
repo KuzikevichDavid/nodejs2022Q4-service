@@ -15,7 +15,7 @@ export class UserService extends EntityService<
     super('user');
   }
 
-  async getAll(): Promise<UserEntity[]> {
+  async getMany(): Promise<UserEntity[]> {
     return this.entities;
   }
 

@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { NotFound } from '../errors/notFound.error';
 import { idNotFound } from '../replyMessages';
 import { Entity } from './entity';
@@ -9,23 +8,23 @@ export enum Operation {
   delete = 'delete',
 }
 
-@Injectable()
 export abstract class EntityService<
   TEntity extends Entity,
   CreateEntityDto,
   UpdateEntityDto,
 > {
-  protected constructor(protected entityName: string) {}
+  protected constructor(protected entityName: string) { }
 
   protected entities: TEntity[] = [];
 
-  async getAll(): Promise<TEntity[]> {
-    return this.entities;
+  public async getMany(): Promise<TEntity[]>;
+  public async getMany(filterPredicate: (entity: TEntity, index: number, array: TEntity[]) => boolean): Promise<TEntity[]>;
+  public async getMany(filterPredicate?: (entity: TEntity, index: number, array: TEntity[]) => boolean): Promise<TEntity[]> {
+    if (!filterPredicate) {
+      return this.entities;
+    }
+    return this.entities.filter(filterPredicate);
   }
-
-  /* async getMany(): Promise<TEntity[]> {
-    return this.entities.filter()
-  }*/
 
   async get(id: string): Promise<TEntity> {
     const resultIndex = this.entities.findIndex((entity) => entity.id === id);
@@ -34,14 +33,7 @@ export abstract class EntityService<
     return this.entities[resultIndex];
   }
 
-  abstract create(entityDto: CreateEntityDto): Promise<TEntity>; /*{
-    const entity: TEntity = {
-      ...entityDto,
-      id: genId(),
-    };
-    this.entities.push(entity);
-    return entity;
-  }*/
+  abstract create(entityDto: CreateEntityDto): Promise<TEntity>;
 
   async update(id: string, entityDto: UpdateEntityDto): Promise<TEntity> {
     const index = this.entities.findIndex((entity) => entity.id === id);
@@ -52,10 +44,10 @@ export abstract class EntityService<
     return entity;
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<TEntity> {
     const index = this.entities.findIndex((entity) => entity.id === id);
     if (index === -1)
       throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
-    this.entities.splice(index, 1);
+    return this.entities.splice(index, 1)[0];
   }
 }
