@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
-  FavoritDto,
-  FavoritReplyDto,
-  FavoritType,
-} from 'src/routes/favs/favorits.dto';
+  FavoritesDto,
+  FavoritesReplyDto,
+  FavoritesType,
+} from 'src/routes/favs/favorites.dto';
 import { NotFound } from '../errors/notFound.error';
 import { genId } from '../idUtils';
 import { idNotFound } from '../replyMessages';
@@ -11,13 +11,13 @@ import { AlbumService } from './album.service';
 import { ArtistService } from './artist.service';
 import { Entity } from './entity';
 import { EntityService, Operation } from './entity.service';
-import { FavoritEntity } from './favorit.entity';
+import { FavoritesEntity } from './favorites.entity';
 import { TrackService } from './track.service';
 
 @Injectable()
-export class FavoritService {
-  protected readonly entityName = 'favorit';
-  protected readonly entities: FavoritEntity[] = [];
+export class FavoritesService {
+  protected readonly entityName = 'favorites';
+  protected readonly entities: FavoritesEntity[] = [];
   protected readonly idx: number = 0;
 
   constructor(
@@ -25,7 +25,7 @@ export class FavoritService {
     protected readonly artists: ArtistService,
     protected readonly albums: AlbumService,
   ) {
-    const favorits = new FavoritEntity({
+    const favorits = new FavoritesEntity({
       id: genId(),
       albums: [],
       artists: [],
@@ -51,7 +51,7 @@ export class FavoritService {
     return idArray.splice(idx, 1)[0];
   }
 
-  public async getEntities(): Promise<FavoritReplyDto> {
+  public async getEntities(): Promise<FavoritesReplyDto> {
     const tracks = this.tracks.getMany((e: Entity) =>
       this.entities[this.idx].tracks.includes(e.id),
     );
@@ -68,21 +68,21 @@ export class FavoritService {
     };
   }
 
-  public async create(entityDto: FavoritDto): Promise<string> {
+  public async create(entityDto: FavoritesDto): Promise<string> {
     switch (entityDto.type) {
-      case FavoritType.Track:
+      case FavoritesType.Track:
         return this.addToFavorits(
           this.tracks,
           this.entities[this.idx].tracks,
           entityDto.id,
         );
-      case FavoritType.Artist:
+      case FavoritesType.Artist:
         return this.addToFavorits(
           this.artists,
           this.entities[this.idx].artists,
           entityDto.id,
         );
-      case FavoritType.Album:
+      case FavoritesType.Album:
         return this.addToFavorits(
           this.albums,
           this.entities[this.idx].albums,
@@ -93,19 +93,19 @@ export class FavoritService {
     }
   }
 
-  public async delete(entityDto: FavoritDto): Promise<string> {
+  public async delete(entityDto: FavoritesDto): Promise<string> {
     switch (entityDto.type) {
-      case FavoritType.Track:
+      case FavoritesType.Track:
         return this.removeFromFavorits(
           this.entities[this.idx].tracks,
           entityDto.id,
         );
-      case FavoritType.Artist:
+      case FavoritesType.Artist:
         return this.removeFromFavorits(
           this.entities[this.idx].artists,
           entityDto.id,
         );
-      case FavoritType.Album:
+      case FavoritesType.Album:
         return this.removeFromFavorits(
           this.entities[this.idx].albums,
           entityDto.id,
