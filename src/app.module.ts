@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AlbumController } from './routes/album/album.controller';
 import { ArtistController } from './routes/artist/artist.controller';
+import { DocController } from './routes/doc.controller';
 import { FavoritController } from './routes/favs/favorit.controller';
 import { TrackController } from './routes/track/track.controller';
 import { UserController } from './routes/user/user.controller';
@@ -18,6 +19,7 @@ import { UserService } from './utils/services/user.service';
     ArtistController,
     AlbumController,
     FavoritController,
+    DocController,
   ],
   providers: [
     UserService,
