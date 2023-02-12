@@ -1,7 +1,11 @@
-import { Entity } from './entity';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from './entity';
 
-export class ArtistEntity extends Entity {
+@Entity()
+export class ArtistEntity extends BaseEntity {
+  @Column()
   name: string;
+  @Column({ type: 'boolean', default: false })
   grammy: boolean;
 
   constructor(entity: Partial<ArtistEntity>) {

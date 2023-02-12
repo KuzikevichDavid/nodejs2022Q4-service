@@ -1,14 +1,21 @@
 import { Exclude } from 'class-transformer';
-import { Entity } from './entity';
+import { Column, CreateDateColumn, Entity, UpdateDateColumn, VersionColumn } from 'typeorm';
+import { BaseEntity } from './entity';
 
-export class UserEntity extends Entity {
+@Entity()
+export class UserEntity extends BaseEntity {
+  @Column()
   login: string;
 
   @Exclude()
+  @Column()
   password: string;
 
+  @VersionColumn ()
   version: number; // integer number, increments on update
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: number; // timestamp of creation
+  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: number; // timestamp of last update
 
   constructor(partial: Partial<UserEntity>) {

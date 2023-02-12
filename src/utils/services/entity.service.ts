@@ -1,6 +1,6 @@
 import { NotFound } from '../errors/notFound.error';
 import { idNotFound } from '../replyMessages';
-import { Entity } from './entity';
+import { BaseEntity } from './entity';
 
 export enum Operation {
   get = 'get by id',
@@ -9,7 +9,7 @@ export enum Operation {
 }
 
 export abstract class EntityService<
-  TEntity extends Entity,
+  TEntity extends BaseEntity,
   CreateEntityDto,
   UpdateEntityDto,
 > {

@@ -9,7 +9,7 @@ import { genId } from '../idUtils';
 import { idNotFound } from '../replyMessages';
 import { AlbumService } from './album.service';
 import { ArtistService } from './artist.service';
-import { Entity } from './entity';
+import { BaseEntity } from './entity';
 import { EntityService, Operation } from './entity.service';
 import { FavoritesEntity } from './favorites.entity';
 import { TrackService } from './track.service';
@@ -35,7 +35,7 @@ export class FavoritesService {
   }
 
   private async addToFavorits(
-    service: EntityService<Entity, unknown, unknown>,
+    service: EntityService<BaseEntity, unknown, unknown>,
     idArray: string[],
     id: string,
   ) {
@@ -52,13 +52,13 @@ export class FavoritesService {
   }
 
   public async getEntities(): Promise<FavoritesReplyDto> {
-    const tracks = this.tracks.getMany((e: Entity) =>
+    const tracks = this.tracks.getMany((e: BaseEntity) =>
       this.entities[this.idx].tracks.includes(e.id),
     );
-    const artists = this.artists.getMany((e: Entity) =>
+    const artists = this.artists.getMany((e: BaseEntity) =>
       this.entities[this.idx].artists.includes(e.id),
     );
-    const albums = this.albums.getMany((e: Entity) =>
+    const albums = this.albums.getMany((e: BaseEntity) =>
       this.entities[this.idx].albums.includes(e.id),
     );
     return {
