@@ -9,7 +9,7 @@ export class AlbumEntity extends BaseEntity {
   name: string;
   @Column()
   year: number;
-  
+
   @Exclude()
   @OneToOne(() => ArtistEntity)
   @JoinColumn()
@@ -17,4 +17,8 @@ export class AlbumEntity extends BaseEntity {
 
   @RelationId((album: AlbumEntity) => album.artist)
   artistId: string | null; // refers to Artist
+
+  constructor(partial: Partial<AlbumEntity>) {
+    super(partial)
+  }
 }

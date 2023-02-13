@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform, Type } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, UpdateDateColumn, VersionColumn } from 'typeorm';
 import { BaseEntity } from './entity';
 
@@ -11,12 +11,14 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
-  @VersionColumn ()
+  @VersionColumn()
   version: number; // integer number, increments on update
+  @Transform(({ value }) => value.getTime())
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: number; // timestamp of creation
-  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: number; // timestamp of last update
+  createdAt: Date; // timestamp of creation
+  @Transform(({ value }) => value.getTime())
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date; // timestamp of last update
 
   constructor(partial: Partial<UserEntity>) {
     super(partial);

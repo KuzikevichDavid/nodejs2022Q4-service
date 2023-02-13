@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { AlbumDto } from '../../routes/album/album.dto';
 import { genId } from '../idUtils';
 import { AlbumEntity } from './album.entity';
@@ -12,26 +14,26 @@ export class AlbumService extends EntityService<
   AlbumDto,
   AlbumDto
 > {
-  constructor(protected readonly trackService: TrackService) {
-    super('album');
+  constructor(
+    @InjectRepository(AlbumEntity)
+    repository: Repository<AlbumEntity>,
+    // @InjectRepository(AlbumEntity)
+    // repository: Repository<AlbumEntity>,
+    protected readonly trackService: TrackService
+  ) {
+    super('album', repository);
   }
 
   async create(entityDto: AlbumDto): Promise<AlbumEntity> {
     const entity = new AlbumEntity({
       ...entityDto,
-      id: genId(),
     });
-    this.entities.push(entity);
-    return entity;
+    return this.repository.save(entity);
   }
 
   async delete(id: string): Promise<AlbumEntity> {
     const deleted = await super.delete(id);
-    const predicate = (track: TrackEntity) => track.albumId === id;
-    for (const track of await this.trackService.getMany(predicate)) {
-      track.albumId = null;
-      this.trackService.update(track.id, track);
-    }
+    await this.trackService.updateMany({ albumId: id }, { albumId: null });
     return deleted;
   }
 }
