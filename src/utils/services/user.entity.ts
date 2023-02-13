@@ -1,5 +1,11 @@
-import { Exclude, Transform, Type } from 'class-transformer';
-import { Column, CreateDateColumn, Entity, UpdateDateColumn, VersionColumn } from 'typeorm';
+import { Exclude, Transform } from 'class-transformer';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  UpdateDateColumn,
+  VersionColumn,
+} from 'typeorm';
 import { BaseEntity } from './entity';
 
 @Entity()

@@ -1,9 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from 'src/routes/user/user.dto';
 import { Repository } from 'typeorm';
 import { Forbidden } from '../errors/forbidden.error';
-import { genId } from '../idUtils';
 import { Operation, EntityService } from './entity.service';
 import { UserEntity } from './user.entity';
 
@@ -15,7 +14,7 @@ export class UserService extends EntityService<
 > {
   constructor(
     @InjectRepository(UserEntity)
-    usersRepository: Repository<UserEntity>
+    usersRepository: Repository<UserEntity>,
   ) {
     super('user', usersRepository);
   }

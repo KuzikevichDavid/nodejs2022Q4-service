@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Entity, Column, RelationId, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, Column, JoinColumn, OneToOne } from 'typeorm';
 import { AlbumEntity } from './album.entity';
 import { ArtistEntity } from './artist.entity';
 import { BaseEntity } from './entity';
@@ -13,16 +13,24 @@ export class TrackEntity extends BaseEntity {
 
   @Exclude()
   @OneToOne(() => ArtistEntity)
-  @JoinColumn()
+  @JoinColumn({
+    name: 'artistId',
+    foreignKeyConstraintName: 'FK_track_to_artist_id',
+    referencedColumnName: 'id',
+  })
   artist: ArtistEntity;
-  @RelationId((track: TrackEntity) => track.artist)
+  @Column({ nullable: true })
   artistId: string | null;
 
   @Exclude()
   @OneToOne(() => AlbumEntity)
-  @JoinColumn()
+  @JoinColumn({
+    name: 'albumId',
+    foreignKeyConstraintName: 'FK_track_to_album_id',
+    referencedColumnName: 'id',
+  })
   album: AlbumEntity;
-  @RelationId((track: TrackEntity) => track.album)
+  @Column({ nullable: true })
   albumId: string | null;
 
   constructor(partial: Partial<TrackEntity>) {

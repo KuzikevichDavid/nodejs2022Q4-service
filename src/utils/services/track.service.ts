@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackDto } from 'src/routes/track/track.dto';
 import { Repository } from 'typeorm';
-import { genId } from '../idUtils';
 import { EntityService } from './entity.service';
 import { TrackEntity } from './track.entity';
 
@@ -14,7 +13,7 @@ export class TrackService extends EntityService<
 > {
   constructor(
     @InjectRepository(TrackEntity)
-    repository: Repository<TrackEntity>
+    repository: Repository<TrackEntity>,
   ) {
     super('track', repository);
   }

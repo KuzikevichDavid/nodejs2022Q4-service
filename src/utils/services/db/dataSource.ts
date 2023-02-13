@@ -1,13 +1,13 @@
-import { config } from "dotenv";
-import { DataSource } from "typeorm";
-import { AlbumEntity } from "../album.entity";
-import { ArtistEntity } from "../artist.entity";
-import { FavoritesEntity } from "../favorites.entity";
-import { TrackEntity } from "../track.entity";
-import { UserEntity } from "../user.entity";
-import { initEntity1676227221502 } from "./migrations/1676227221502-initEntity";
+import { config } from 'dotenv';
+import { DataSource } from 'typeorm';
+import { AlbumEntity } from '../album.entity';
+import { ArtistEntity } from '../artist.entity';
+import { FavoritesEntity } from '../favorites.entity';
+import { TrackEntity } from '../track.entity';
+import { UserEntity } from '../user.entity';
+import { initEntity1676227221502 } from './migrations/1676227221502-initEntity';
 
-config()
+config();
 
 export const appDataSource = new DataSource({
   type: 'postgres',
@@ -30,9 +30,7 @@ export const appDataSource = new DataSource({
   subscribers: [],
   migrationsTableName: 'migration',
 
-  migrations: [
-    initEntity1676227221502,
-  ],
+  migrations: [initEntity1676227221502],
 
   ssl: false,
 });
@@ -40,8 +38,9 @@ export const appDataSource = new DataSource({
 // to initialize initial connection with the database, register all entities
 // and "synchronize" database schema, call "initialize()" method of a newly created database
 // once in your application bootstrap
-appDataSource.initialize()
+appDataSource
+  .initialize()
   .then(() => {
     // here you can start to work with your database
   })
-  .catch((error) => console.log(error))
+  .catch((error) => console.log(error));

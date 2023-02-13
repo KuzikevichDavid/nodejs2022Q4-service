@@ -1,4 +1,4 @@
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { NotFound } from '../errors/notFound.error';
 import { idNotFound } from '../replyMessages';
@@ -17,17 +17,17 @@ export abstract class EntityService<
 > {
   protected constructor(
     protected readonly entityName: string,
-    protected readonly repository: Repository<TEntity>
+    protected readonly repository: Repository<TEntity>,
   ) { }
 
   protected readonly entities: TEntity[] = [];
 
   public async getMany(): Promise<TEntity[]>;
   public async getMany(
-    options: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[]
+    options: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
   ): Promise<TEntity[]>;
   public async getMany(
-    options?: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[]
+    options?: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
   ): Promise<TEntity[]> {
     if (!options) {
       return this.repository.find();
@@ -36,7 +36,7 @@ export abstract class EntityService<
   }
 
   async get(id: string): Promise<TEntity> {
-    const entity = await this.repository.findOneBy({ id: id as any })
+    const entity = await this.repository.findOneBy({ id: id as any });
     if (!entity)
       throw new NotFound(Operation.get, idNotFound(this.entityName, id));
     return entity;
@@ -45,7 +45,7 @@ export abstract class EntityService<
   abstract create(entityDto: CreateEntityDto): Promise<TEntity>;
 
   async update(id: string, entityDto: UpdateEntityDto): Promise<TEntity> {
-    const entity = await this.repository.findOneBy({ id: id as any })//exist({ id: id})
+    const entity = await this.repository.findOneBy({ id: id as any });
     if (!entity)
       throw new NotFound(Operation.update, idNotFound(this.entityName, id));
     Object.assign(entity, entityDto);
@@ -53,17 +53,18 @@ export abstract class EntityService<
     return updated;
   }
 
-  async updateMany(options: FindOptionsWhere<TEntity>,
-    partialEntity: QueryDeepPartialEntity<TEntity>
+  async updateMany(
+    options: FindOptionsWhere<TEntity>,
+    partialEntity: QueryDeepPartialEntity<TEntity>,
   ): Promise<void> {
-    this.repository.update(options, partialEntity)
+    this.repository.update(options, partialEntity);
   }
 
   async delete(id: string): Promise<TEntity> {
-    const entity = await this.repository.findOneBy({ id: id as any })
+    const entity = await this.repository.findOneBy({ id: id as any });
     if (!entity)
       throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
-    this.repository.delete({ id: id as any });
+    await this.repository.delete({ id: id as any });
     return entity;
   }
 }

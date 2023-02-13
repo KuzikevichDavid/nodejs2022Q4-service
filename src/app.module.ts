@@ -26,7 +26,7 @@ import { UserService } from './utils/services/user.service';
       TrackEntity,
       ArtistEntity,
       AlbumEntity,
-      FavoritesEntity
+      FavoritesEntity,
     ]),
   ],
   controllers: [
@@ -45,4 +45,4 @@ import { UserService } from './utils/services/user.service';
     FavoritesService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

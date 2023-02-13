@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, JoinColumn, OneToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ArtistEntity } from './artist.entity';
 import { BaseEntity } from './entity';
 
@@ -12,13 +12,17 @@ export class AlbumEntity extends BaseEntity {
 
   @Exclude()
   @OneToOne(() => ArtistEntity)
-  @JoinColumn()
+  @JoinColumn({
+    name: 'artistId',
+    foreignKeyConstraintName: 'FK_album_to_artist_id',
+    referencedColumnName: 'id',
+  })
   artist: ArtistEntity;
 
-  @RelationId((album: AlbumEntity) => album.artist)
+  @Column({ nullable: true })
   artistId: string | null; // refers to Artist
 
   constructor(partial: Partial<AlbumEntity>) {
-    super(partial)
+    super(partial);
   }
 }
