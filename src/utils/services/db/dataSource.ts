@@ -6,6 +6,8 @@ import { FavoritesEntity } from '../favorites.entity';
 import { TrackEntity } from '../track.entity';
 import { UserEntity } from '../user.entity';
 import { initEntity1676227221502 } from './migrations/1676227221502-initEntity';
+import { updateEntities1676310884658 } from './migrations/1676310884658-updateEntities';
+import { updateEntities1676311784853 } from './migrations/1676311784853-updateEntities';
 
 config();
 
@@ -30,7 +32,11 @@ export const appDataSource = new DataSource({
   subscribers: [],
   migrationsTableName: 'migration',
 
-  migrations: [initEntity1676227221502],
+  migrations: [
+    initEntity1676227221502,
+    updateEntities1676310884658,
+    updateEntities1676311784853,
+  ],
 
   ssl: false,
 });
