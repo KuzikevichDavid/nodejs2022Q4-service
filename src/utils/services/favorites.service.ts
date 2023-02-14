@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import {
-  FavoritesDto,
-  FavoritesReplyDto,
-  FavoritesType,
-} from 'src/routes/favs/favorites.dto';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FavoritesDto, FavoritesType } from 'src/routes/favs/favorites.dto';
+import { Repository } from 'typeorm';
 import { NotFound } from '../errors/notFound.error';
-import { genId } from '../idUtils';
 import { idNotFound } from '../replyMessages';
 import { AlbumService } from './album.service';
 import { ArtistService } from './artist.service';
@@ -15,103 +12,128 @@ import { FavoritesEntity } from './favorites.entity';
 import { TrackService } from './track.service';
 
 @Injectable()
-export class FavoritesService {
+export class FavoritesService extends EntityService<
+  FavoritesEntity,
+  FavoritesDto,
+  FavoritesDto
+> {
   protected readonly entityName = 'favorites';
   protected readonly entities: FavoritesEntity[] = [];
-  protected readonly idx: number = 0;
+  protected idx: string = null;
 
   constructor(
+    @InjectRepository(FavoritesEntity)
+    protected readonly repository: Repository<FavoritesEntity>,
+    @Inject(forwardRef(() => TrackService))
     protected readonly tracks: TrackService,
+    @Inject(forwardRef(() => ArtistService))
     protected readonly artists: ArtistService,
+    @Inject(forwardRef(() => AlbumService))
     protected readonly albums: AlbumService,
   ) {
-    const favorits = new FavoritesEntity({
-      id: genId(),
-      albums: [],
-      artists: [],
-      tracks: [],
-    });
-    this.entities.push(favorits);
+    super('favorites', repository);
   }
 
-  private async addToFavorits(
-    service: EntityService<BaseEntity, unknown, unknown>,
-    idArray: string[],
-    id: string,
-  ) {
-    await service.get(id);
-    idArray.push(id);
-    return id;
+  public async init() {
+    let favs: FavoritesEntity = (await this.repository.find())[0];
+    if (favs) {
+      await this.repository.remove(favs);
+    }
+    favs = new FavoritesEntity({});
+    favs = await this.repository.save(favs);
+    this.idx = favs.id;
   }
 
-  private async removeFromFavorits(idArray: string[], id: string) {
-    const idx = idArray.findIndex((idVal) => idVal === id);
+  async get(): Promise<FavoritesEntity>;
+  async get(id: string): Promise<FavoritesEntity>;
+  public async get(id?: string): Promise<FavoritesEntity> {
+    if (id) {
+      return super.get(id);
+    }
+    return (
+      await this.repository.find({
+        relations: {
+          albumEntities: true,
+          artistEntities: true,
+          trackEntities: true,
+        },
+      })
+    )[0];
+  }
+
+  private async push(entity: BaseEntity, entityArray: BaseEntity[]) {
+    if (!entityArray) entityArray = [];
+    entityArray.push(entity);
+  }
+
+  private async remove(id: string, entityArray: BaseEntity[]) {
+    const idx = entityArray.findIndex((idVal) => idVal.id === id);
     if (idx === -1)
-      throw new NotFound(Operation.update, idNotFound(this.entityName, id));
-    return idArray.splice(idx, 1)[0];
+      throw new NotFound(
+        Operation.update,
+        idNotFound(this.entityName + typeof entityArray, id),
+      );
+    return entityArray.splice(idx, 1);
   }
 
-  public async getEntities(): Promise<FavoritesReplyDto> {
-    const tracks = this.tracks.getMany((e: BaseEntity) =>
-      this.entities[this.idx].tracks.includes(e.id),
-    );
-    const artists = this.artists.getMany((e: BaseEntity) =>
-      this.entities[this.idx].artists.includes(e.id),
-    );
-    const albums = this.albums.getMany((e: BaseEntity) =>
-      this.entities[this.idx].albums.includes(e.id),
-    );
-    return {
-      tracks: await tracks,
-      artists: await artists,
-      albums: await albums,
-    };
-  }
-
-  public async create(entityDto: FavoritesDto): Promise<string> {
+  async create(entityDto: FavoritesDto): Promise<FavoritesEntity> {
+    const favs = await this.repository.findOne({
+      where: { id: this.idx },
+      relations: {
+        albumEntities: true,
+        artistEntities: true,
+        trackEntities: true,
+      },
+    });
     switch (entityDto.type) {
       case FavoritesType.Track:
-        return this.addToFavorits(
-          this.tracks,
-          this.entities[this.idx].tracks,
-          entityDto.id,
-        );
+        const track = await this.tracks.get(entityDto.id);
+        this.push(track, favs.trackEntities);
+        break;
       case FavoritesType.Artist:
-        return this.addToFavorits(
-          this.artists,
-          this.entities[this.idx].artists,
-          entityDto.id,
-        );
+        const artist = await this.artists.get(entityDto.id);
+        this.push(artist, favs.artistEntities);
+        break;
       case FavoritesType.Album:
-        return this.addToFavorits(
-          this.albums,
-          this.entities[this.idx].albums,
-          entityDto.id,
-        );
+        const album = await this.albums.get(entityDto.id);
+        this.push(album, favs.albumEntities);
+        break;
       default:
         throw new RangeError('Unexpected value of enum `FavoritType`'); // or need TypeError
     }
+    return this.repository.save(favs);
   }
 
-  public async delete(entityDto: FavoritesDto): Promise<string> {
-    switch (entityDto.type) {
-      case FavoritesType.Track:
-        return this.removeFromFavorits(
-          this.entities[this.idx].tracks,
-          entityDto.id,
-        );
-      case FavoritesType.Artist:
-        return this.removeFromFavorits(
-          this.entities[this.idx].artists,
-          entityDto.id,
-        );
-      case FavoritesType.Album:
-        return this.removeFromFavorits(
-          this.entities[this.idx].albums,
-          entityDto.id,
-        );
-      default:
-        throw new RangeError('Unexpected value of enum `FavoritType`'); // or need TypeError
+  async delete(id: string): Promise<FavoritesEntity>;
+  async delete(entityDto: Partial<FavoritesDto>): Promise<string>;
+  public async delete(
+    entityDto: string | Partial<FavoritesDto>,
+  ): Promise<string | FavoritesEntity> {
+    if (typeof entityDto === 'string') {
+      return super.delete(entityDto);
+    } else if (entityDto instanceof FavoritesDto) {
+      const favs = await this.repository.findOne({
+        where: { id: this.idx },
+        relations: {
+          albumEntities: true,
+          artistEntities: true,
+          trackEntities: true,
+        },
+      });
+      switch (entityDto.type) {
+        case FavoritesType.Track:
+          await this.remove(entityDto.id, favs.trackEntities);
+          break;
+        case FavoritesType.Artist:
+          await this.remove(entityDto.id, favs.artistEntities);
+          break;
+        case FavoritesType.Album:
+          await this.remove(entityDto.id, favs.albumEntities);
+          break;
+        default:
+          throw new RangeError('Unexpected value of enum `FavoritType`'); // or need TypeError
+      }
+      return this.repository.save(favs);
     }
   }
 }

@@ -1,5 +1,5 @@
-import { Exclude, Expose } from 'class-transformer';
-import { Entity, ManyToMany, RelationId } from 'typeorm';
+import { Expose } from 'class-transformer';
+import { Entity, JoinTable, ManyToMany } from 'typeorm';
 import { AlbumEntity } from './album.entity';
 import { ArtistEntity } from './artist.entity';
 import { BaseEntity } from './entity';
@@ -8,25 +8,55 @@ import { TrackEntity } from './track.entity';
 @Entity()
 export class FavoritesEntity extends BaseEntity {
   @Expose({ name: 'artists' })
-  @ManyToMany((type) => ArtistEntity)
+  @ManyToMany(() => ArtistEntity)
+  @JoinTable({
+    name: 'favorite_artists',
+    joinColumn: {
+      name: 'favoriteId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_artists_favoriteId',
+    },
+    inverseJoinColumn: {
+      name: 'artistId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_artists_artistId',
+    },
+  })
   artistEntities: ArtistEntity[];
-  @Exclude()
-  @RelationId((favs: FavoritesEntity) => favs.artistEntities)
-  artists: string[]; // favorite artists ids
-  
+
   @Expose({ name: 'albums' })
-  @ManyToMany((type) => AlbumEntity)
+  @ManyToMany(() => AlbumEntity)
+  @JoinTable({
+    name: 'favorite_albums',
+    joinColumn: {
+      name: 'favoriteId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_albums_favoriteId',
+    },
+    inverseJoinColumn: {
+      name: 'albumId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_albums_albumId',
+    },
+  })
   albumEntities: AlbumEntity[];
-  @Exclude()
-  @RelationId((favs: FavoritesEntity) => favs.albumEntities)
-  albums: string[]; // favorite albums ids
-  
+
   @Expose({ name: 'tracks' })
-  @ManyToMany((type) => TrackEntity)
+  @ManyToMany(() => TrackEntity, {})
+  @JoinTable({
+    name: 'favorite_tracks',
+    joinColumn: {
+      name: 'favoriteId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_tracks_favoriteId',
+    },
+    inverseJoinColumn: {
+      name: 'trackId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_favorite_tracks_trackId',
+    },
+  })
   trackEntities: TrackEntity[];
-  @Exclude()
-  @RelationId((favs: FavoritesEntity) => favs.trackEntities)
-  tracks: string[]; // favorite tracks ids
 
   constructor(partial: Partial<FavoritesEntity>) {
     super(partial);

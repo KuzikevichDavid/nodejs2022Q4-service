@@ -18,9 +18,7 @@ export abstract class EntityService<
   protected constructor(
     protected readonly entityName: string,
     protected readonly repository: Repository<TEntity>,
-  ) { }
-
-  protected readonly entities: TEntity[] = [];
+  ) {}
 
   public async getMany(): Promise<TEntity[]>;
   public async getMany(
@@ -66,5 +64,11 @@ export abstract class EntityService<
       throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
     await this.repository.delete({ id: id as any });
     return entity;
+  }
+
+  protected notFoundRefuseHandler(error: unknown) {
+    if (!(error instanceof NotFound)) {
+      throw error;
+    }
   }
 }
