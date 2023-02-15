@@ -32,7 +32,7 @@ export const appDataSource = new DataSource({
   logging: true,
   subscribers: [],
   migrationsTableName: 'migration',
-
+  migrationsRun: process.env.RUN_MIGRATIONS === 'true',
   migrations: [
     initEntity1676227221502,
     updateEntities1676310884658,
