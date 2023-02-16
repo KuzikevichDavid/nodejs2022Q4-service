@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ${APP_DOCKERFILE}
     networks:
-      hostnet:
+      #hostnet:
       users-bridge:
         ipv4_address: ${NETWORK_APP_IP}
     secrets:
@@ -21,16 +21,18 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${PORT}
-      POSTGRES_HOST: ${POSTGRES_HOST}
+      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: ${NETWORK_BASE_IP}
       POSTGRES_PORT: ${POSTGRES_PORT}
       SSH_PRIVKEY: /run/secrets/${SSH_PRIVKEY}
       SSH_CERT: /run/secrets/${SSH_CERT}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS}
     ports:
       - ${PORT}:${PORT}
       - ${DOC_PORT}:${DOC_PORT}
     restart: unless-stopped
   postgres:
-    build: ${BASE_DOCKERFILE} #./docker/base/
+    build: ${BASE_DOCKERFILE}
     networks:
       users-bridge:
         ipv4_address: ${NETWORK_BASE_IP}
@@ -41,7 +43,7 @@ services:
       PGDATA: "/var/lib/postgresql/data/pgdata" # postgres official image constant
     volumes:
       - ${DB_VOLUME}/Init_db_scripts:/docker-entrypoint-initdb.d
-      #- ${DB_VOLUME}:/var/lib/postgresql/data
+      - ${DB_VOLUME}:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     healthcheck:
@@ -62,11 +64,9 @@ networks:
       config:
         - subnet: ${NETWORK_SUBNET}
           gateway: ${NETWORK_GATEWAY}
-  hostnet:
-    #external: true
-    #driver: host
+  #hostnet:
 secrets:
   privkey:
-    file: ${SSH_PRIVKEY} #./localhost-privkey.pem
+    file: ${SSH_PRIVKEY} 
   cert:
-    file: ${SSH_CERT} #./localhost-cert.pem
+    file: ${SSH_CERT} 

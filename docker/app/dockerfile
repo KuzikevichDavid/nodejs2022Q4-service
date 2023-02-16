@@ -1,7 +1,8 @@
 FROM node:lts-alpine
 WORKDIR /usr/app
-COPY ./package.json .
-RUN npm i
+COPY ./package*.json .
+# --production
+#RUN npm install --production
 COPY . .
 EXPOSE ${PORT} ${DOC_PORT}
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
