@@ -1,11 +1,13 @@
 version: '3.9'
 services:
   app:
+    env_file: ./docker/app/.env
     build:
       context: .
+      tags:
+      - "cr1pper/rest-service:nestjs-app"
       dockerfile: ${APP_DOCKERFILE}
     networks:
-      #hostnet:
       users-bridge:
         ipv4_address: ${NETWORK_APP_IP}
     secrets:
@@ -21,18 +23,30 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${PORT}
-      NODE_ENV: ${NODE_ENV}
+      APP_WORKDIR: ${APP_WORKDIR}
+      APP_CMD: ${APP_CMD}
       POSTGRES_HOST: ${NETWORK_BASE_IP}
       POSTGRES_PORT: ${POSTGRES_PORT}
       SSH_PRIVKEY: /run/secrets/${SSH_PRIVKEY}
       SSH_CERT: /run/secrets/${SSH_CERT}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS}
+    volumes:
+      - ${APP_VOLUME}/node_modules:${APP_WORKDIR}/node_modules
+      - ${APP_VOLUME}/src:${APP_WORKDIR}/src
+      - ${APP_VOLUME}/doc:${APP_WORKDIR}/doc
     ports:
       - ${PORT}:${PORT}
       - ${DOC_PORT}:${DOC_PORT}
     restart: unless-stopped
   postgres:
-    build: ${BASE_DOCKERFILE}
+    build: 
+      dockerfile: ${BASE_DOCKERFILE}
+      tags:
+      - "cr1pper/rest-service:postgres-db"
+    command:
+      - "postgres"
+      - "-c"
+      - "logging_collector=on"
     networks:
       users-bridge:
         ipv4_address: ${NETWORK_BASE_IP}
@@ -42,7 +56,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: "/var/lib/postgresql/data/pgdata" # postgres official image constant
     volumes:
-      - ${DB_VOLUME}/Init_db_scripts:/docker-entrypoint-initdb.d
       - ${DB_VOLUME}:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
@@ -64,7 +77,6 @@ networks:
       config:
         - subnet: ${NETWORK_SUBNET}
           gateway: ${NETWORK_GATEWAY}
-  #hostnet:
 secrets:
   privkey:
     file: ${SSH_PRIVKEY} 

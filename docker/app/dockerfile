@@ -1,8 +1,8 @@
 FROM node:lts-alpine
-WORKDIR /usr/app
-COPY ./package*.json .
-# --production
-#RUN npm install --production
-COPY . .
-EXPOSE ${PORT} ${DOC_PORT}
-CMD ["npm", "run", "start:prod"]
+#ENV APP_WORKDIR=/usr/app PORT=4000 DOC_PORT=4001 APP_CMD="start:dev"
+RUN echo $APP_WORKDIR && echo $PORT && echo $DOC_PORT && echo $APP_CMD
+WORKDIR $APP_WORKDIR
+COPY *.json .
+#RUN npm i
+EXPOSE $PORT $DOC_PORT
+CMD "npm" "run" $APP_CMD

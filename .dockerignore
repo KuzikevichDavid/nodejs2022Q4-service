@@ -17,7 +17,7 @@ dockerfile
 #/doc
 
 # ssh certificates 
-.pem
+*.pem
 
 # node
 npm-debug.log
@@ -25,8 +25,11 @@ npm-debug.log
 .coverage.*
 
 # compiled output 
-#/dist
-#/node_modules
+/dist
+/node_modules
+
+# source
+/src
 
 # Logs
 logs
@@ -64,4 +67,4 @@ lerna-debug.log*
 /base
 
 # readme
-readme.md
+*.md
