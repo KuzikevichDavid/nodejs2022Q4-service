@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install Docker](https://www.docker.com/products/docker-desktop/).
 
 ## Downloading
 
@@ -19,16 +20,35 @@ npm install
 
 ## Running application
 
-Rename file `.env.example` to `.env` and change value of `port` if needed. Default value of `port` is 4000.
+Go to `.env` and change values of environment variables if needed. There are default values.
 
+To run application type:
 ```bash
-npm start
+docker compose up -d
 ```
 
-After starting the app you can test API in `Swagger Editor` by typing in browser http://localhost:4000/doc/ 
-or https://editor.swagger.io/?url=https://localhost:4001/doc/file.
+After starting the app on contaner you will see in docker image logs:
+```
+Starting compilation in watch mode...
+``` 
+You have to wait until compilation is finished. When it finish you'll see in docker image logs:
+```
+[Nest] LOG [NestApplication] Nest application successfully started
+```
+After than you can run tests or work with API. 
+
+To view the API documentation, type http://localhost:4000/doc/ in browser. To test API in `Swagger Editor`, type https://editor.swagger.io/?url=https://localhost:4001/doc/file in browser.
 
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Scan images for security vulnerability
+
+```bash
+npm run vulnerability:scan
+```
+
+## Docker Images 
+![Docker Hub](./DockerHub.png)
 
 ## Testing
 

@@ -1,12 +1,16 @@
 version: '3.9'
+name: nodejs-rest-service
 services:
   app:
-    env_file: ./docker/app/.env
     build:
       context: .
       tags:
-      - "cr1pper/rest-service:nestjs-app"
+      - "${REPOSITORY}:nestjs-app"
       dockerfile: ${APP_DOCKERFILE}
+      args:
+        APP_WORKDIR: ${APP_WORKDIR}
+        PORT: ${PORT}
+        DOC_PORT: ${DOC_PORT}
     networks:
       users-bridge:
         ipv4_address: ${NETWORK_APP_IP}
@@ -23,9 +27,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${PORT}
-      APP_WORKDIR: ${APP_WORKDIR}
-      APP_CMD: ${APP_CMD}
-      POSTGRES_HOST: ${NETWORK_BASE_IP}
+      DOC_PORT: ${DOC_PORT}
+      POSTGRES_HOST: ${DB_IP}
       POSTGRES_PORT: ${POSTGRES_PORT}
       SSH_PRIVKEY: /run/secrets/${SSH_PRIVKEY}
       SSH_CERT: /run/secrets/${SSH_CERT}
@@ -42,21 +45,21 @@ services:
     build: 
       dockerfile: ${BASE_DOCKERFILE}
       tags:
-      - "cr1pper/rest-service:postgres-db"
+      - "${REPOSITORY}:postgres-db"
     command:
       - "postgres"
       - "-c"
       - "logging_collector=on"
     networks:
       users-bridge:
-        ipv4_address: ${NETWORK_BASE_IP}
+        ipv4_address: ${DB_IP}
     environment:
       POSTGRES_DB: ${POSTGRES_DATABASE}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: "/var/lib/postgresql/data/pgdata" # postgres official image constant
+      PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - ${DB_VOLUME}:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     healthcheck:
@@ -72,6 +75,7 @@ services:
     restart: unless-stopped
 networks:
   users-bridge:
+    driver: bridge
     ipam:
       driver: default
       config:
@@ -82,3 +86,5 @@ secrets:
     file: ${SSH_PRIVKEY} 
   cert:
     file: ${SSH_CERT} 
+volumes:
+  pg_data:

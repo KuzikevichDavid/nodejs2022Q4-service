@@ -5,10 +5,6 @@ import { ArtistEntity } from '../artist.entity';
 import { FavoritesEntity } from '../favorites.entity';
 import { TrackEntity } from '../track.entity';
 import { UserEntity } from '../user.entity';
-import { initEntity1676227221502 } from './migrations/1676227221502-initEntity';
-import { updateEntities1676310884658 } from './migrations/1676310884658-updateEntities';
-import { updateEntities1676311784853 } from './migrations/1676311784853-updateEntities';
-import { updateFavoritesEntity1676356048196 } from './migrations/1676356048196-updateFavoritesEntity';
 import { init1676519107193 } from './migrations/1676519107193-init';
 
 config();
@@ -35,12 +31,6 @@ export const appDataSource = new DataSource({
   migrationsTableName: 'migration',
   migrationsRun: process.env.RUN_MIGRATIONS === 'true',
   migrations: [init1676519107193],
-  // migrations: [
-  //   initEntity1676227221502,
-  //   updateEntities1676310884658,
-  //   updateEntities1676311784853,
-  //   updateFavoritesEntity1676356048196,
-  // ],
 
   ssl: false,
 });
