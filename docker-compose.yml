@@ -34,9 +34,7 @@ services:
       SSH_CERT: /run/secrets/${SSH_CERT}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS}
     volumes:
-      - ${APP_VOLUME}/node_modules:${APP_WORKDIR}/node_modules
       - ${APP_VOLUME}/src:${APP_WORKDIR}/src
-      - ${APP_VOLUME}/doc:${APP_WORKDIR}/doc
     ports:
       - ${PORT}:${PORT}
       - ${DOC_PORT}:${DOC_PORT}
