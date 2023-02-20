@@ -47,7 +47,12 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 npm run vulnerability:scan
 ```
 
+## Postgres logs
+
+![logs](./volume_screen.png)
+
 ## Docker Images 
+
 ![Docker Hub](./DockerHub.png)
 
 ## Testing
