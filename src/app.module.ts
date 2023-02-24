@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AlbumController } from './routes/album/album.controller';
 import { ArtistController } from './routes/artist/artist.controller';
 import { DocController } from './routes/doc.controller';
@@ -28,6 +31,7 @@ import { UserService } from './utils/services/user.service';
       AlbumEntity,
       FavoritesEntity,
     ]),
+    AuthModule,
   ],
   controllers: [
     UserController,
@@ -38,6 +42,10 @@ import { UserService } from './utils/services/user.service';
     DocController,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     UserService,
     TrackService,
     ArtistService,

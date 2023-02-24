@@ -19,6 +19,19 @@ export class UserService extends EntityService<
     super('user', usersRepository);
   }
 
+  async get(id: string): Promise<UserEntity>;
+  async get(part: Partial<UserEntity>): Promise<UserEntity>;
+  async get(searchParam: string | Partial<UserEntity>): Promise<UserEntity> {
+    if (typeof searchParam === 'string') {
+      return super.get(searchParam);
+    } else {
+      const login = (searchParam as Partial<UserEntity>).login;
+      if (login) {
+        return this.repository.findOne({ where: { login: login } });
+      } else return null;
+    }
+  }
+
   async getMany(): Promise<UserEntity[]> {
     return this.repository.find();
   }
