@@ -8,17 +8,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './authService';
 import { LoginDto, SignUpDto } from './authDto';
-import { UserService } from 'src/utils/services/user.service';
 import { AllowAnon } from './anonymous.decorator';
 
 @AllowAnon()
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
@@ -34,9 +30,6 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() signupDto: SignUpDto) {
-    return this.userService.create({
-      login: signupDto.login,
-      password: signupDto.password,
-    });
+    return this.authService.signup(signupDto.login, signupDto.password);
   }
 }

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from 'src/routes/user/user.dto';
 import { Repository } from 'typeorm';
 import { Forbidden } from '../errors/forbidden.error';
+import { compare, hash } from '../hash';
 import { Operation, EntityService } from './entity.service';
 import { UserEntity } from './user.entity';
 
@@ -39,7 +40,7 @@ export class UserService extends EntityService<
   async create(userDto: CreateUserDto): Promise<UserEntity> {
     const user: UserEntity = new UserEntity({
       login: userDto.login,
-      password: userDto.password,
+      password: await hash(userDto.password),
     });
     const createdUser = await this.repository.save(user);
     return createdUser;
@@ -47,10 +48,10 @@ export class UserService extends EntityService<
 
   async update(id: string, userDto: UpdateUserDto): Promise<UserEntity> {
     const user = await this.get(id);
-    if (userDto.oldPassword !== user.password) {
+    if (!(await compare(userDto.oldPassword, user.password))) {
       throw new Forbidden(Operation.update, 'Old password not correct');
     }
-    user.password = userDto.newPassword;
+    user.password = await hash(userDto.newPassword);
     const result = await this.repository.save(user);
     return result;
   }
