@@ -4,11 +4,29 @@ import { config } from 'dotenv';
 import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
 import { DocModule } from './doc.module';
+import { LoggerService } from './logs/loggerService';
+import { LoggingInterceptor } from './logs/loggingInterceptor';
 
 config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    bufferLogs: true,
+    logger: LoggerService.levelNames.slice(0,+process.env.LOG_LVL),
+  });
+  const logger = app.get(LoggerService);
+
+  process.on('uncaughtException', (error, origin) => {
+    logger.error(error.message, error.stack, origin);
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    logger.error('unhandledRejection', reason);
+  });
+
+  app.useLogger(logger);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
