@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -9,6 +9,7 @@ import { DocController } from './routes/doc.controller';
 import { FavoritesController } from './routes/favs/favorites.controller';
 import { TrackController } from './routes/track/track.controller';
 import { UserController } from './routes/user/user.controller';
+import { AllExceptionsFilter } from './utils/allExceptionFilter';
 import { AlbumEntity } from './utils/services/album.entity';
 import { AlbumService } from './utils/services/album.service';
 import { ArtistEntity } from './utils/services/artist.entity';
@@ -45,6 +46,10 @@ import { UserService } from './utils/services/user.service';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
     UserService,
     TrackService,
