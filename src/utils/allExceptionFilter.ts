@@ -19,17 +19,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
-    const req = ctx.getRequest()
+    const req = ctx.getRequest();
     const reqBody = req.body;
-    const path = httpAdapter.getRequestUrl(req)
-    const method = httpAdapter.getRequestMethod(req)
+    const path = httpAdapter.getRequestUrl(req);
+    const method = httpAdapter.getRequestMethod(req);
 
-    let message: string = 'Internal server error';
+    let message = 'Internal server error';
     let httpStatus: number;
-    if (exception instanceof HttpException){
+    if (exception instanceof HttpException) {
       message = exception.message;
-      httpStatus = exception.getStatus()
-    } else { 
+      httpStatus = exception.getStatus();
+    } else {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -38,7 +38,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message: message,
     };
 
-    this.logger.error({message, method, path, reqBody, exception});
+    this.logger.error({ message, method, path, reqBody, exception });
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }

@@ -4,17 +4,15 @@ import { config } from 'dotenv';
 import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
 import { DocModule } from './doc.module';
-import { LoggerService } from './logs/loggerService';
-import { LoggingInterceptor } from './logs/loggingInterceptor';
+import { LoggerService } from './logging/loggerService';
 
 config();
 
 async function bootstrap() {
-
   const app = await NestFactory.create(AppModule, {
     cors: true,
     bufferLogs: true,
-    logger: LoggerService.levelNames.slice(0,+process.env.LOG_LVL),
+    logger: LoggerService.levelNames.slice(0, +process.env.LOG_LVL),
   });
   const logger = app.get(LoggerService);
 

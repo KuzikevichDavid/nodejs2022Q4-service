@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LoggingInterceptor } from './logging/loggingInterceptor';
 import { LoggerModule } from './logging/log.module';
-import { LoggerMiddleware } from './logging/loggerMiddleware';
 import { AlbumController } from './routes/album/album.controller';
 import { ArtistController } from './routes/artist/artist.controller';
 import { DocController } from './routes/doc.controller';
