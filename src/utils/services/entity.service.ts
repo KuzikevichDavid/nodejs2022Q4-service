@@ -55,7 +55,7 @@ export abstract class EntityService<
     options: FindOptionsWhere<TEntity>,
     partialEntity: QueryDeepPartialEntity<TEntity>,
   ): Promise<void> {
-    this.repository.update(options, partialEntity);
+    await this.repository.update(options, partialEntity);
   }
 
   async delete(id: string): Promise<TEntity> {
