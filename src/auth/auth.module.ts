@@ -18,10 +18,6 @@ import { RefreshTokenStrategy } from './refresh.strategy';
     PassportModule,
     JwtModule.register({
       secret: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
-      /* secretOrKeyProvider(requestType, tokenOrPayload, options) {
-        requestType === JwtSecretRequestType.SIGN
-        tokenOrPayload
-      }, */
       privateKey: readFileSync(
         process.env.SSH_PRIVKEY || 'localhost-privkey.pem',
       ),

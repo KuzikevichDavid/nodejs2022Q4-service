@@ -12,7 +12,6 @@ import { AuthService } from './authService';
 import { LoginDto, RefreshTokenDto, SignUpDto } from './authDto';
 import { AllowAnon } from './anonymous.decorator';
 import { RefreshTokenGuard } from './refresh-auth.guard';
-import { ForbiddenException } from '@nestjs/common/exceptions';
 
 @AllowAnon()
 @Controller('auth')
@@ -23,14 +22,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() loginDto: LoginDto) {
-    const user = await this.authService.validateUser(
-      loginDto.login,
-      loginDto.password,
-    );
-    if (!user) {
-      throw new ForbiddenException('login or password are incorrect');
-    }
-    return this.authService.login(user);
+    return this.authService.login(loginDto.login, loginDto.password);
   }
 
   @Post('signup')

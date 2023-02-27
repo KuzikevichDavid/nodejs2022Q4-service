@@ -71,4 +71,8 @@ export abstract class EntityService<
       throw error;
     }
   }
+
+  async save(entity: TEntity) {
+    return this.repository.save(entity);
+  }
 }

@@ -17,6 +17,10 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @Exclude()
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @VersionColumn()
   version: number; // integer number, increments on update
   @Transform(({ value }) => value.getTime())

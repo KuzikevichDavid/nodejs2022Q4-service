@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
 import { instanceToPlain } from 'class-transformer';
 import { readFileSync } from 'fs';
@@ -14,15 +15,10 @@ export class AuthService {
     cert: Buffer;
   };
 
-  private readonly secret: Buffer;
-
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
   ) {
-    /* this.secret = readFileSync(
-      process.env.SSH_PRIVKEY || 'localhost-privkey.pem',
-    ); */
     this.secrets = {
       privkey: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
       cert: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
@@ -40,9 +36,16 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(username: string, pass: string) {
+    const user = await this.usersService.get({ login: username });
+    if (!user || !(await compare(pass, user.password))) {
+      throw new ForbiddenException('login or password are incorrect');
+    }
     const payload = { username: user.login, sub: user.id };
-    return await this.getTokens(payload);
+    const tokens = await this.getTokens(payload);
+    user.refreshToken = tokens.refreshToken;
+    this.usersService.save(user);
+    return tokens;
   }
 
   async signup(login: string, password: string) {
@@ -60,33 +63,36 @@ export class AuthService {
     try {
       const payload: object = this.jwtService.verify(refreshToken, {
         algorithms: ['RS512'],
-        //secret: this.secret,
         secret: this.secrets.privkey,
         publicKey: this.secrets.cert,
       });
-      return await this.getTokens({
+
+      const user = await this.usersService.get(payload['sub']);
+      if (refreshToken !== user.refreshToken)
+        throw new UnauthorizedException('Refresh token in body invalid');
+      const tokens = await this.getTokens({
         sub: payload['sub'],
         username: payload['username'],
       });
+      user.refreshToken = tokens.refreshToken;
+      this.usersService.save(user);
+      return tokens;
     } catch (err: unknown) {
       if (err instanceof JsonWebTokenError) {
-        throw new ForbiddenException('Refresh token invalid');
+        throw new UnauthorizedException('Refresh token in body invalid');
       } else throw new Error(err['message'] || err);
     }
   }
 
-  async getTokens(payload: object) {
+  private async getTokens(payload: object) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         algorithm: 'RS512',
-        //secret: this.secret,
         privateKey: this.secrets.privkey,
-
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
       }),
       this.jwtService.signAsync(payload, {
         algorithm: 'RS512',
-        //secret: this.secret,
         privateKey: this.secrets.privkey,
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       }),
