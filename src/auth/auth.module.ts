@@ -9,6 +9,7 @@ import { UserService } from 'src/utils/services/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './authService';
 import { JwtStrategy } from './jwt.strategy';
+import { RefreshTokenStrategy } from './refresh.strategy';
 
 @Module({
   imports: [
@@ -17,13 +18,21 @@ import { JwtStrategy } from './jwt.strategy';
     PassportModule,
     JwtModule.register({
       secret: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
+      /* secretOrKeyProvider(requestType, tokenOrPayload, options) {
+        requestType === JwtSecretRequestType.SIGN
+        tokenOrPayload
+      }, */
+      privateKey: readFileSync(
+        process.env.SSH_PRIVKEY || 'localhost-privkey.pem',
+      ),
+      publicKey: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
       signOptions: {
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
         algorithm: 'RS512',
       },
     }),
   ],
-  providers: [UserService, AuthService, JwtStrategy],
+  providers: [UserService, AuthService, JwtStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
