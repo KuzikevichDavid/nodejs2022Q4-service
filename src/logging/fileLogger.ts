@@ -1,61 +1,76 @@
-import { createWriteStream, WriteStream } from 'fs';
+import {
+  closeSync,
+  Dirent,
+  mkdirSync,
+  opendirSync,
+  openSync,
+  statSync,
+  writeSync,
+} from 'fs';
 import * as os from 'os';
-import { mkdir, opendir, stat } from 'fs/promises';
 import { join } from 'path';
 
 const { EOL } = os;
 
 export class FileLogger {
-  protected fileStream: WriteStream;
+  protected fd: number;
   protected fileSize = 0;
   constructor(
     protected readonly path: string,
     protected readonly fileName: string,
     protected readonly size: number,
   ) {
+    this.createNewStream();
     process.on('SIGINT', () => {
-      this.fileStream.end();
+      this.close();
     });
   }
 
-  async init() {
-    await this.createNewStream();
-  }
+  private getfilename() {
+    mkdirSync(this.path, { recursive: true });
 
-  private async getfilename() {
-    await mkdir(this.path, { recursive: true });
-    const dir = await opendir(this.path);
+    const dir = opendirSync(this.path);
     let count = 0;
-    for await (const dirent of dir) {
+    let dirent: Dirent;
+    while ((dirent = dir.readSync())) {
       if (dirent.isFile()) {
         count++;
       }
     }
+    dir.closeSync();
+
+    this.fileSize = 0;
+
     try {
-      const fd = await stat(
-        this.fileName + (count === 0 ? 0 : count - 1) + '.log',
-      );
-      if (fd.isFile()) this.fileSize = fd.size;
-    } catch (err) {}
+      const fileName = this.fileName + (count === 0 ? 0 : count - 1) + '.log';
+      const stat = statSync(fileName);
+      if (stat.isFile() && stat.size < this.size) {
+        this.fileSize = stat.size;
+        return fileName;
+      }
+    } catch (err) { }
+
     return this.fileName + count + '.log';
   }
 
-  private async createNewStream() {
-    if (this.fileStream) this.fileStream.end();
+  private createNewStream() {
+    if (this.fd) closeSync(this.fd);
+
+    const fileName = join(this.path, this.getfilename());
+    this.fd = openSync(fileName, 'a');
     this.fileSize = 0;
-    this.fileStream = createWriteStream(
-      join(this.path, await this.getfilename()),
-      { flags: 'a' },
-    );
   }
 
-  async write(chunk: any) {
-    if (this.fileSize + this.fileStream.bytesWritten >= this.size)
-      await this.createNewStream();
-    this.fileStream.write(chunk + EOL);
+  public write(chunk: string) {
+    writeSync(this.fd, chunk + EOL);
+    if (this.fileSize + chunk.length >= this.size) {
+      this.createNewStream();
+    } else this.fileSize += chunk.length;
   }
 
-  end() {
-    this.fileStream.end();
+  close() {
+    try {
+      if (this.fd) closeSync(this.fd);
+    } catch (err) { }
   }
 }

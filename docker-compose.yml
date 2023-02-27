@@ -5,7 +5,7 @@ services:
     build:
       context: .
       tags:
-      - "${REPOSITORY}:nestjs-app"
+        - "${REPOSITORY}:nestjs-app"
       dockerfile: ${APP_DOCKERFILE}
       args:
         APP_WORKDIR: ${APP_WORKDIR}
@@ -35,15 +35,16 @@ services:
       RUN_MIGRATIONS: ${RUN_MIGRATIONS}
     volumes:
       - ${APP_VOLUME}/src:${APP_WORKDIR}/src
+      - ${APP_VOLUME}/logs:${APP_WORKDIR}/logs
     ports:
       - ${PORT}:${PORT}
       - ${DOC_PORT}:${DOC_PORT}
     restart: unless-stopped
   postgres:
-    build: 
+    build:
       dockerfile: ${BASE_DOCKERFILE}
       tags:
-      - "${REPOSITORY}:postgres-db"
+        - "${REPOSITORY}:postgres-db"
     command:
       - "postgres"
       - "-c"
@@ -81,8 +82,9 @@ networks:
           gateway: ${NETWORK_GATEWAY}
 secrets:
   privkey:
-    file: ${SSH_PRIVKEY} 
+    file: ${SSH_PRIVKEY}
   cert:
-    file: ${SSH_CERT} 
+    file: ${SSH_CERT}
 volumes:
   pg_data:
+  logs:

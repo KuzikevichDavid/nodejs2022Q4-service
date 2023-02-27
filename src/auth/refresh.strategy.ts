@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { readFileSync } from 'fs';
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { NotFound } from 'src/utils/errors/notFound.error';
 import { UserService } from 'src/utils/services/user.service';
 
 @Injectable()
@@ -20,10 +21,20 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: any) {
-    const user = await this.userService.get(payload.sub);
-    const refreshToken = req.get('Authorization').replace('Bearer', '').trim();
-    if (user?.refreshToken === refreshToken) {
-      return { ...payload, refreshToken };
+    try {
+      const user = await this.userService.get(payload.sub);
+      const refreshToken = req
+        .get('Authorization')
+        .replace('Bearer', '')
+        .trim();
+      if (user?.refreshToken === refreshToken) {
+        return { ...payload, refreshToken };
+      }
+    } catch (err) {
+      if (err instanceof NotFound) {
+        throw new ForbiddenException('refresh token in header invalid');
+      }
+      throw err;
     }
     throw new ForbiddenException('refresh token in header invalid');
   }

@@ -23,8 +23,6 @@ export class LoggerService extends ConsoleLogger {
     verbose: 4,
   };
 
-  protected fileLoggers: FileLogger[];
-
   private setFileLoggers() {
     return LoggerService.levelNames.map((levelName) => {
       const logger = new FileLogger(
@@ -32,15 +30,16 @@ export class LoggerService extends ConsoleLogger {
         levelName, //name of file where will be saved logging result
         +process.env.LOG_SIZE * 1000, // filesize
       );
-      logger.init();
       return logger;
     });
   }
 
+  private readonly fileLoggers: FileLogger[] = this.setFileLoggers();;
+
   constructor() {
     super();
     super.setLogLevels(LoggerService.levelNames);
-    this.fileLoggers = this.setFileLoggers();
+    //this.fileLoggers = this.setFileLoggers();
   }
 
   log(message: any, ...optionalParams: any[]) {
