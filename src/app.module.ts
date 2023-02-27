@@ -23,6 +23,8 @@ import { TrackEntity } from './utils/services/track.entity';
 import { TrackService } from './utils/services/track.service';
 import { UserEntity } from './utils/services/user.entity';
 import { UserService } from './utils/services/user.service';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { UserService } from './utils/services/user.service';
     AlbumController,
     FavoritesController,
     DocController,
+    AppController,
   ],
   providers: [
     {
@@ -63,6 +66,7 @@ import { UserService } from './utils/services/user.service';
     ArtistService,
     AlbumService,
     FavoritesService,
+    AppService,
   ],
 })
 export class AppModule {}

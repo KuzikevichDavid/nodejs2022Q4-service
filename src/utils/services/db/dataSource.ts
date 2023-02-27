@@ -26,7 +26,7 @@ export const appDataSource = new DataSource({
     UserEntity,
   ],
   synchronize: true,
-  logging: true,
+  logging: false,
   subscribers: [],
   migrationsTableName: 'migration',
   migrationsRun: process.env.RUN_MIGRATIONS === 'true',

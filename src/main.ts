@@ -12,9 +12,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
     bufferLogs: true,
-    logger: LoggerService.levelNames.slice(0, +process.env.LOG_LVL),
   });
   const logger = app.get(LoggerService);
+  app.useLogger(logger);
 
   process.on('uncaughtException', (error, origin) => {
     logger.error(error.message, error.stack, origin);
@@ -24,7 +24,6 @@ async function bootstrap() {
     logger.error('unhandledRejection', reason);
   });
 
-  app.useLogger(logger);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

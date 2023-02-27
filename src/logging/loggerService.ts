@@ -3,13 +3,18 @@ import * as winston from 'winston';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
-  public static levelNames: LogLevel[] = [
+  private static _levelNames: LogLevel[] = [
     'error',
     'warn',
     'log',
     'debug',
     'verbose',
   ];
+
+  public static get levelNames(): LogLevel[] {
+    return LoggerService._levelNames.slice(0, +process.env.LOG_LVL + 1);
+  }
+
   private levels = {
     error: 0,
     warn: 1,
@@ -18,24 +23,24 @@ export class LoggerService extends ConsoleLogger {
     verbose: 4,
   };
 
-  protected logger: winston.Logger;
+  protected fileLogger: winston.Logger;
 
   private setFileTransports() {
-    return LoggerService.levelNames.slice(0, +process.env.LOG_LVL + 1).map((levelName) => {
+    return LoggerService.levelNames.map((levelName) => {
       return new winston.transports.File({
-        dirname: `${process.env.LOG_PATH}/${levelName}/'`, //path to where save loggin result
+        dirname: `${process.env.LOG_PATH}/${levelName}/`, //path to where save loggin result
         filename: `${levelName}.log`, //name of file where will be saved logging result
         level: levelName,
-        maxsize: +process.env.LOG_SIZE,
+        maxsize: +process.env.LOG_SIZE * 1000,
       });
     });
   }
 
   constructor() {
     super();
-    this.logger = winston.createLogger({
+    super.setLogLevels(LoggerService.levelNames);
+    this.fileLogger = winston.createLogger({
       levels: this.levels,
-      level: LoggerService.levelNames[+process.env.LOG_LVL],
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
@@ -46,7 +51,7 @@ export class LoggerService extends ConsoleLogger {
 
   log(message: any, ...optionalParams: any[]) {
     super.log(message, optionalParams);
-    this.logger.log(
+    this.fileLogger.log(
       LoggerService.levelNames[this.levels.log],
       message,
       optionalParams,
@@ -55,7 +60,7 @@ export class LoggerService extends ConsoleLogger {
 
   error(message: any, ...optionalParams: any[]) {
     super.error(message, optionalParams);
-    this.logger.log(
+    this.fileLogger.log(
       LoggerService.levelNames[this.levels.error],
       message,
       optionalParams,
@@ -64,7 +69,7 @@ export class LoggerService extends ConsoleLogger {
 
   warn(message: any, ...optionalParams: any[]) {
     super.warn(message, optionalParams);
-    this.logger.log(
+    this.fileLogger.log(
       LoggerService.levelNames[this.levels.warn],
       message,
       optionalParams,
@@ -73,7 +78,7 @@ export class LoggerService extends ConsoleLogger {
 
   debug(message: any, ...optionalParams: any[]) {
     super.debug(message, optionalParams);
-    this.logger.log(
+    this.fileLogger.log(
       LoggerService.levelNames[this.levels.debug],
       message,
       optionalParams,
@@ -82,7 +87,7 @@ export class LoggerService extends ConsoleLogger {
 
   verbose(message: any, ...optionalParams: any[]) {
     super.verbose(message, optionalParams);
-    this.logger.log(
+    this.fileLogger.log(
       LoggerService.levelNames[this.levels.verbose],
       message,
       optionalParams,
