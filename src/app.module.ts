@@ -11,7 +11,7 @@ import { DocController } from './routes/doc.controller';
 import { FavoritesController } from './routes/favs/favorites.controller';
 import { TrackController } from './routes/track/track.controller';
 import { UserController } from './routes/user/user.controller';
-import { AllExceptionsFilter } from './utils/allExceptionFilter';
+import { AllExceptionsFilter } from './logging/allExceptionFilter';
 import { AlbumEntity } from './utils/services/album.entity';
 import { AlbumService } from './utils/services/album.service';
 import { ArtistEntity } from './utils/services/artist.entity';
