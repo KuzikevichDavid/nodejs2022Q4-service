@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { readFileSync } from 'fs';
+import { LoggerModule } from 'src/logging/log.module';
 import { appDataSource } from 'src/utils/services/db/dataSource';
 import { UserEntity } from 'src/utils/services/user.entity';
 import { UserService } from 'src/utils/services/user.service';
@@ -16,15 +16,11 @@ import { RefreshTokenStrategy } from './refresh.strategy';
     TypeOrmModule.forRoot(appDataSource.options),
     TypeOrmModule.forFeature([UserEntity]),
     PassportModule,
+    LoggerModule,
     JwtModule.register({
-      secret: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
-      privateKey: readFileSync(
-        process.env.SSH_PRIVKEY || 'localhost-privkey.pem',
-      ),
-      publicKey: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
+      secret: process.env.SSH_CERT,
       signOptions: {
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
-        algorithm: 'RS512',
       },
     }),
   ],
@@ -32,4 +28,4 @@ import { RefreshTokenStrategy } from './refresh.strategy';
   controllers: [AuthController],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

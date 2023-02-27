@@ -9,16 +9,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest<TUser = any>(
-    err: any,
-    user: any,
-    info: any,
-    context: ExecutionContext,
-    status?: any,
-  ): TUser {
-    return super.handleRequest(err, user, info, context, status);
-  }
-
   canActivate(context: ExecutionContext) {
     const isAllow = this.reflector.getAllAndOverride<boolean>(
       IS_ANONYMOUS_KEY,

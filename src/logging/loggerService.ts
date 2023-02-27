@@ -34,12 +34,12 @@ export class LoggerService extends ConsoleLogger {
     });
   }
 
-  private readonly fileLoggers: FileLogger[] = this.setFileLoggers();;
+  private readonly fileLoggers: FileLogger[] = this.setFileLoggers();
 
   constructor() {
     super();
     super.setLogLevels(LoggerService.levelNames);
-    //this.fileLoggers = this.setFileLoggers();
+    this.fileLoggers = this.setFileLoggers();
   }
 
   log(message: any, ...optionalParams: any[]) {

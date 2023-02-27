@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
 import { instanceToPlain } from 'class-transformer';
-import { readFileSync } from 'fs';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { compare } from 'src/utils/hash';
 import { UserEntity } from 'src/utils/services/user.entity';
@@ -10,19 +9,10 @@ import { UserService } from 'src/utils/services/user.service';
 
 @Injectable()
 export class AuthService {
-  private readonly secrets: {
-    privkey: Buffer;
-    cert: Buffer;
-  };
-
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
   ) {
-    this.secrets = {
-      privkey: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
-      cert: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
-    };
   }
 
   async validateUser(
@@ -62,9 +52,7 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const payload: object = this.jwtService.verify(refreshToken, {
-        algorithms: ['RS512'],
-        secret: this.secrets.privkey,
-        publicKey: this.secrets.cert,
+        secret: process.env.SSH_CERT,
       });
 
       const user = await this.usersService.get(payload['sub']);
@@ -85,18 +73,14 @@ export class AuthService {
   }
 
   private async getTokens(payload: object) {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        algorithm: 'RS512',
-        privateKey: this.secrets.privkey,
-        expiresIn: process.env.TOKEN_EXPIRE_TIME,
-      }),
-      this.jwtService.signAsync(payload, {
-        algorithm: 'RS512',
-        privateKey: this.secrets.privkey,
-        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-      }),
-    ]);
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.SSH_CERT,
+      expiresIn: process.env.TOKEN_EXPIRE_TIME,
+    })
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.SSH_CERT,
+      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+    })
 
     return {
       accessToken,

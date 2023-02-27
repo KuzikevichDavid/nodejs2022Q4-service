@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-import { readFileSync } from 'fs';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { NotFound } from 'src/utils/errors/notFound.error';
 import { UserService } from 'src/utils/services/user.service';
@@ -15,8 +14,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       passReqToCallback: true,
-      secretOrKey: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
-      algorithms: ['RS512'],
+      secretOrKey: process.env.SSH_CERT,
     });
   }
 

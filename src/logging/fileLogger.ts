@@ -48,7 +48,7 @@ export class FileLogger {
         this.fileSize = stat.size;
         return fileName;
       }
-    } catch (err) { }
+    } catch (err) {}
 
     return this.fileName + count + '.log';
   }
@@ -71,6 +71,6 @@ export class FileLogger {
   close() {
     try {
       if (this.fd) closeSync(this.fd);
-    } catch (err) { }
+    } catch (err) {}
   }
 }

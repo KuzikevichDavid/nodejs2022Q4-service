@@ -14,11 +14,6 @@ services:
     networks:
       users-bridge:
         ipv4_address: ${NETWORK_APP_IP}
-    secrets:
-      - source: privkey
-        target: ${SSH_PRIVKEY}
-      - source: cert
-        target: ${SSH_CERT}
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,9 +25,12 @@ services:
       DOC_PORT: ${DOC_PORT}
       POSTGRES_HOST: ${DB_IP}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      SSH_PRIVKEY: /run/secrets/${SSH_PRIVKEY}
-      SSH_CERT: /run/secrets/${SSH_CERT}
+      SSH_PRIVKEY: ${SSH_PRIVKEY}
+      SSH_CERT: ${SSH_CERT}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS}
+      LOG_LVL: ${LOG_LVL}
+      LOG_SIZE: ${LOG_SIZE}
+      LOG_PATH: ${LOG_PATH}
     volumes:
       - ${APP_VOLUME}/src:${APP_WORKDIR}/src
       - ${APP_VOLUME}/logs:${APP_WORKDIR}/logs
@@ -80,11 +78,5 @@ networks:
       config:
         - subnet: ${NETWORK_SUBNET}
           gateway: ${NETWORK_GATEWAY}
-secrets:
-  privkey:
-    file: ${SSH_PRIVKEY}
-  cert:
-    file: ${SSH_CERT}
 volumes:
   pg_data:
-  logs:

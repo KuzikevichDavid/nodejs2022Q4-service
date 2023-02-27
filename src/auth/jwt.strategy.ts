@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { readFileSync } from 'fs';
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { UserService } from 'src/utils/services/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+  constructor(private readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      algorithms: ['RS512'],
-      secretOrKey: readFileSync(
-        process.env.SSH_PRIVKEY || 'localhost-privkey.pem',
-      ),
+      secretOrKey: process.env.SSH_CERT
     });
   }
 
