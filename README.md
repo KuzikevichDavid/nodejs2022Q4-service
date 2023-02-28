@@ -22,10 +22,17 @@ npm install
 
 Go to `.env` and change values of environment variables if needed. There are default values.
 
-To run application type:
+Приложение `nestjs-app` не корректно работает внутри докера. Для работы приложения нужна только база в докере.
+
+После выполнения команды:
 ```bash
 docker compose up -d
 ```
+Нужно остановить образ `nestjs-app`. Выглядеть в `docker` должно приблизительно как-то так:
+
+![logs](./docker.png)
+
+После этого можно запускать тесты и рабоать из браузера или постмана по порту `4000`
 
 After starting the app on contaner you will see in docker image logs:
 ```
