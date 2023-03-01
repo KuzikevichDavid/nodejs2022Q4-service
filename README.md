@@ -32,7 +32,11 @@ docker compose up -d
 
 ![logs](./docker.png)
 
-После этого можно запускать тесты и рабоать из браузера или постмана по порту `4000`
+После этого нужно запустить приложение 
+```bash 
+npm run start:dev
+```
+Теперь можно запускать тесты и работать из браузера или постмана по порту `4000`
 
 After starting the app on contaner you will see in docker image logs:
 ```
