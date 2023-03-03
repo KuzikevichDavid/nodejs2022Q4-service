@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from 'src/routes/user/user.dto';
+import { Repository } from 'typeorm';
 import { Forbidden } from '../errors/forbidden.error';
-import { genId } from '../idUtils';
 import { Operation, EntityService } from './entity.service';
 import { UserEntity } from './user.entity';
 
@@ -11,26 +12,24 @@ export class UserService extends EntityService<
   CreateUserDto,
   UpdateUserDto
 > {
-  constructor() {
-    super('user');
+  constructor(
+    @InjectRepository(UserEntity)
+    usersRepository: Repository<UserEntity>,
+  ) {
+    super('user', usersRepository);
   }
 
   async getMany(): Promise<UserEntity[]> {
-    return this.entities;
+    return this.repository.find();
   }
 
   async create(userDto: CreateUserDto): Promise<UserEntity> {
-    const date = Date.now();
     const user: UserEntity = new UserEntity({
-      id: genId(),
       login: userDto.login,
       password: userDto.password,
-      createdAt: date,
-      updatedAt: date,
-      version: 1,
     });
-    this.entities.push(user);
-    return user;
+    const createdUser = await this.repository.save(user);
+    return createdUser;
   }
 
   async update(id: string, userDto: UpdateUserDto): Promise<UserEntity> {
@@ -39,8 +38,7 @@ export class UserService extends EntityService<
       throw new Forbidden(Operation.update, 'Old password not correct');
     }
     user.password = userDto.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    return user;
+    const result = await this.repository.save(user);
+    return result;
   }
 }

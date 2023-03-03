@@ -18,14 +18,14 @@ async function bootstrap() {
   await app.listen(+process.env.PORT || 4000);
 
   const options = {
-    key: readFileSync('localhost-privkey.pem'),
-    cert: readFileSync('localhost-cert.pem'),
+    key: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
+    cert: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
   };
 
   const doc = await NestFactory.create(DocModule, {
     httpsOptions: options,
     cors: true,
   });
-  await doc.listen(+process.env.PORT + 1 || 4001);
+  await doc.listen(+process.env.DOC_PORT || 4001);
 }
 bootstrap();

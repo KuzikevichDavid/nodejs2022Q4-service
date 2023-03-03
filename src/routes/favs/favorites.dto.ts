@@ -11,6 +11,9 @@ export enum FavoritesType {
 export class FavoritesDto {
   type: FavoritesType;
   id: string;
+  constructor(partial: Partial<FavoritesDto>) {
+    Object.assign(this, partial);
+  }
 }
 
 export class FavoritesReplyDto {

@@ -1,0 +1,8 @@
+FROM node:lts-alpine
+ARG APP_WORKDIR=/usr/app PORT=4000 DOC_PORT=4001
+WORKDIR $APP_WORKDIR
+COPY *.json .
+COPY ./doc ./doc
+RUN npm i
+EXPOSE $PORT $DOC_PORT
+CMD "npm" "run" "start:dev"

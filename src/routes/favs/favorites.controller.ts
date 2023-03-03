@@ -1,4 +1,5 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,18 +9,23 @@ import {
   ParseUUIDPipe,
   Post,
   UnprocessableEntityException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { NotFound } from 'src/utils/errors/notFound.error';
+import { FavoritesEntity } from 'src/utils/services/favorites.entity';
 import { FavoritesService } from 'src/utils/services/favorites.service';
-import { FavoritesReplyDto, FavoritesType } from './favorites.dto';
+import { FavoritesDto, FavoritesType } from './favorites.dto';
 
 @Controller('favs')
+@UseInterceptors(ClassSerializerInterceptor)
 export class FavoritesController {
-  constructor(protected service: FavoritesService) {}
+  constructor(protected service: FavoritesService) {
+    service.init();
+  }
 
   @Get()
-  async getFavorites(): Promise<FavoritesReplyDto> {
-    return this.service.getEntities();
+  async getFavorites(): Promise<FavoritesEntity> {
+    return this.service.get();
   }
 
   @Post('/:type/:id')
@@ -30,7 +36,7 @@ export class FavoritesController {
     const favsType: FavoritesType = type.toLowerCase() as FavoritesType;
     if (!favsType) throw new NotFoundException();
     return this.service
-      .create({ id: id, type: favsType })
+      .create(new FavoritesDto({ id: id, type: favsType }))
       .catch(this.exceptionHandler);
   }
 
@@ -43,7 +49,7 @@ export class FavoritesController {
     const favsType: FavoritesType = type.toLowerCase() as FavoritesType;
     if (!favsType) throw new NotFoundException();
     return this.service
-      .delete({ id: id, type: favsType })
+      .delete(new FavoritesDto({ id: id, type: favsType }))
       .catch(this.deleteExceptionHandler);
   }
 

@@ -1,6 +1,8 @@
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { NotFound } from '../errors/notFound.error';
 import { idNotFound } from '../replyMessages';
-import { Entity } from './entity';
+import { BaseEntity } from './entity';
 
 export enum Operation {
   get = 'get by id',
@@ -9,57 +11,64 @@ export enum Operation {
 }
 
 export abstract class EntityService<
-  TEntity extends Entity,
+  TEntity extends BaseEntity,
   CreateEntityDto,
   UpdateEntityDto,
 > {
-  protected constructor(protected readonly entityName: string) {}
-
-  protected readonly entities: TEntity[] = [];
+  protected constructor(
+    protected readonly entityName: string,
+    protected readonly repository: Repository<TEntity>,
+  ) {}
 
   public async getMany(): Promise<TEntity[]>;
   public async getMany(
-    filterPredicate: (
-      entity: TEntity,
-      index: number,
-      array: TEntity[],
-    ) => boolean,
+    options: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
   ): Promise<TEntity[]>;
   public async getMany(
-    filterPredicate?: (
-      entity: TEntity,
-      index: number,
-      array: TEntity[],
-    ) => boolean,
+    options?: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
   ): Promise<TEntity[]> {
-    if (!filterPredicate) {
-      return this.entities;
+    if (!options) {
+      return this.repository.find();
     }
-    return this.entities.filter(filterPredicate);
+    return this.repository.findBy(options);
   }
 
   async get(id: string): Promise<TEntity> {
-    const resultIndex = this.entities.findIndex((entity) => entity.id === id);
-    if (resultIndex === -1)
+    const entity = await this.repository.findOneBy({ id: id as any });
+    if (!entity)
       throw new NotFound(Operation.get, idNotFound(this.entityName, id));
-    return this.entities[resultIndex];
+    return entity;
   }
 
   abstract create(entityDto: CreateEntityDto): Promise<TEntity>;
 
   async update(id: string, entityDto: UpdateEntityDto): Promise<TEntity> {
-    const index = this.entities.findIndex((entity) => entity.id === id);
-    if (index === -1)
+    const entity = await this.repository.findOneBy({ id: id as any });
+    if (!entity)
       throw new NotFound(Operation.update, idNotFound(this.entityName, id));
-    const entity = this.entities[index];
     Object.assign(entity, entityDto);
-    return entity;
+    const updated = this.repository.save(entity);
+    return updated;
+  }
+
+  async updateMany(
+    options: FindOptionsWhere<TEntity>,
+    partialEntity: QueryDeepPartialEntity<TEntity>,
+  ): Promise<void> {
+    this.repository.update(options, partialEntity);
   }
 
   async delete(id: string): Promise<TEntity> {
-    const index = this.entities.findIndex((entity) => entity.id === id);
-    if (index === -1)
+    const entity = await this.repository.findOneBy({ id: id as any });
+    if (!entity)
       throw new NotFound(Operation.delete, idNotFound(this.entityName, id));
-    return this.entities.splice(index, 1)[0];
+    await this.repository.delete({ id: id as any });
+    return entity;
+  }
+
+  protected notFoundRefuseHandler(error: unknown) {
+    if (!(error instanceof NotFound)) {
+      throw error;
+    }
   }
 }
