@@ -24,22 +24,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const path = httpAdapter.getRequestUrl(req);
     const method = httpAdapter.getRequestMethod(req);
 
-    let message = 'Internal server error';
-    let httpStatus: number;
     if (exception instanceof HttpException) {
-      message = exception.message;
-      httpStatus = exception.getStatus();
+      this.logger.warn({
+        message: exception.message,
+        method,
+        path,
+        reqBody,
+        exception: exception.getResponse(),
+      });
+      httpAdapter.reply(
+        ctx.getResponse(),
+        exception.getResponse(),
+        exception.getStatus(),
+      );
     } else {
-      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      const message = 'Internal server error';
+      const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      const responseBody = {
+        statusCode: httpStatus,
+        message: message,
+      };
+
+      this.logger.error({ message, method, path, reqBody, exception });
+      httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
     }
-
-    const responseBody = {
-      statusCode: httpStatus,
-      message: message,
-    };
-
-    this.logger.error({ message, method, path, reqBody, exception });
-
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }

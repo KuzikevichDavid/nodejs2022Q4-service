@@ -1,9 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { config } from 'dotenv';
-import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
-import { DocModule } from './doc.module';
 import { LoggerService } from './logging/loggerService';
 
 config();
@@ -14,14 +12,16 @@ async function bootstrap() {
     bufferLogs: true,
   });
   const logger = app.get(LoggerService);
+  // const logger = new LoggerService();
+  // logger.
   app.useLogger(logger);
 
   process.on('uncaughtException', (error, origin) => {
-    logger.error(error.message, error.stack, origin);
+    logger.errorSync(error.message, error.stack, origin);
   });
 
-  process.on('unhandledRejection', (reason) => {
-    logger.error('unhandledRejection', reason);
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.errorSync('unhandledRejection', reason, promise);
   });
 
   app.useGlobalPipes(

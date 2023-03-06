@@ -4,7 +4,6 @@ import {
   Controller,
   HttpCode,
   Post,
-  UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -34,8 +33,6 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(200)
   async refresh(@Body() refreshDto: RefreshTokenDto) {
-    if (!refreshDto || !refreshDto?.refreshToken)
-      throw new UnauthorizedException('Request body invalid');
     return this.authService.refresh(refreshDto.refreshToken);
   }
 }

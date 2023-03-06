@@ -25,6 +25,7 @@ import { UserEntity } from './utils/services/user.entity';
 import { UserService } from './utils/services/user.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DocModule } from './doc.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AppService } from './app.service';
     ]),
     AuthModule,
     LoggerModule,
+    DocModule,
   ],
   controllers: [
     UserController,

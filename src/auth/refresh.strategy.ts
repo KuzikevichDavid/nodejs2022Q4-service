@@ -1,39 +1,20 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { NotFound } from 'src/utils/errors/notFound.error';
-import { UserService } from 'src/utils/services/user.service';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
-  constructor(private readonly userService: UserService) {
+  constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      passReqToCallback: true,
       secretOrKey: process.env.SSH_CERT,
     });
   }
 
-  async validate(req: Request, payload: any) {
-    try {
-      const user = await this.userService.get(payload.sub);
-      const refreshToken = req
-        .get('Authorization')
-        .replace('Bearer', '')
-        .trim();
-      if (user?.refreshToken === refreshToken) {
-        return { ...payload, refreshToken };
-      }
-    } catch (err) {
-      if (err instanceof NotFound) {
-        throw new ForbiddenException('refresh token in header invalid');
-      }
-      throw err;
-    }
-    throw new ForbiddenException('refresh token in header invalid');
+  async validate(payload: any) {
+    return { id: payload.sub, username: payload.login };
   }
 }
