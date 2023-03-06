@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FavoritesDto, FavoritesType } from 'src/routes/favs/favorites.dto';
 import { Repository } from 'typeorm';
 import { ArtistDto } from '../../routes/artist/artist.dto';
-import { AlbumService } from './album.service';
+import { AlbumService } from '../../routes/album/album.service';
 import { ArtistEntity } from './artist.entity';
-import { EntityService } from './entity.service';
-import { FavoritesService } from './favorites.service';
-import { TrackService } from './track.service';
+import { EntityService } from '../entity.service';
+import { FavoritesService } from '../favs/favorites.service';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class ArtistService extends EntityService<

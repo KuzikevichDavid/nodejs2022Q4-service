@@ -2,10 +2,10 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Body, Param, Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { ArtistEntity } from '../../utils/services/artist.entity';
-import { ArtistService } from '../../utils/services/artist.service';
+import { ArtistEntity } from './artist.entity';
 import EntityController from '../entity.controller';
 import { ArtistDto } from './artist.dto';
+import { ArtistService } from './artist.service';
 
 @Controller('artist')
 export class ArtistController extends EntityController<

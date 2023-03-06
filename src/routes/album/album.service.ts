@@ -2,11 +2,11 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FavoritesDto, FavoritesType } from 'src/routes/favs/favorites.dto';
 import { Repository } from 'typeorm';
-import { AlbumDto } from '../../routes/album/album.dto';
+import { EntityService } from '../entity.service';
+import { FavoritesService } from '../favs/favorites.service';
+import { TrackService } from '../track/track.service';
+import { AlbumDto } from './album.dto';
 import { AlbumEntity } from './album.entity';
-import { EntityService } from './entity.service';
-import { FavoritesService } from './favorites.service';
-import { TrackService } from './track.service';
 
 @Injectable()
 export class AlbumService extends EntityService<

@@ -13,8 +13,8 @@ import {
 import { BadRequest } from 'src/utils/errors/badRequest.error';
 import { Forbidden } from 'src/utils/errors/forbidden.error';
 import { NotFound } from 'src/utils/errors/notFound.error';
-import { BaseEntity } from 'src/utils/services/entity';
-import { EntityService } from 'src/utils/services/entity.service';
+import { BaseEntity } from 'src/routes/entity';
+import { EntityService } from './entity.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 export default abstract class EntityController<

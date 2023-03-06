@@ -3,13 +3,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'src/logging/log.module';
-import { appDataSource } from 'src/utils/services/db/dataSource';
-import { UserEntity } from 'src/utils/services/user.entity';
-import { UserService } from 'src/utils/services/user.service';
+import { appDataSource } from 'src/utils/db/dataSource';
+import { UserEntity } from 'src/routes/user/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './authService';
 import { JwtStrategy } from './jwt.strategy';
 import { RefreshTokenStrategy } from './refresh.strategy';
+import { UserService } from 'src/routes/user/user.service';
 
 @Module({
   imports: [

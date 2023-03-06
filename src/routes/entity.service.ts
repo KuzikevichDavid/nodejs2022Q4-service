@@ -1,7 +1,7 @@
+import { NotFound } from 'src/utils/errors/notFound.error';
+import { idNotFound } from 'src/utils/replyMessages';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { NotFound } from '../errors/notFound.error';
-import { idNotFound } from '../replyMessages';
 import { BaseEntity } from './entity';
 
 export enum Operation {

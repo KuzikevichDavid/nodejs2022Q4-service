@@ -2,8 +2,8 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import { UserService } from 'src/routes/user/user.service';
 import { compare } from 'src/utils/hash';
-import { UserService } from 'src/utils/services/user.service';
 
 @Injectable()
 export class AuthService {

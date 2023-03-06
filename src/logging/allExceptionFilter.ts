@@ -45,7 +45,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message: message,
       };
 
-      this.logger.error({ message, method, path, reqBody, exception });
+      this.logger.error({
+        message,
+        method,
+        path,
+        reqBody,
+        exception: { message: exception['message'], stack: exception['stack'] },
+      });
       httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
     }
   }

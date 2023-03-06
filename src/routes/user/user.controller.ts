@@ -6,10 +6,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UserService } from 'src/utils/services/user.service';
-import { UserEntity } from 'src/utils/services/user.entity';
+import { UserEntity } from 'src/routes/user/user.entity';
 import EntityController from '../entity.controller';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController extends EntityController<

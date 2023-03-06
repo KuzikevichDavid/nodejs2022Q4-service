@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { ArtistEntity } from './artist.entity';
-import { BaseEntity } from './entity';
+import { ArtistEntity } from '../artist/artist.entity';
+import { BaseEntity } from '../entity';
 
 @Entity()
 export class AlbumEntity extends BaseEntity {

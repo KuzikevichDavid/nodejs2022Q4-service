@@ -12,9 +12,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { NotFound } from 'src/utils/errors/notFound.error';
-import { FavoritesEntity } from 'src/utils/services/favorites.entity';
-import { FavoritesService } from 'src/utils/services/favorites.service';
+import { FavoritesEntity } from 'src/routes/favs/favorites.entity';
 import { FavoritesDto, FavoritesType } from './favorites.dto';
+import { FavoritesService } from './favorites.service';
 
 @Controller('favs')
 @UseInterceptors(ClassSerializerInterceptor)

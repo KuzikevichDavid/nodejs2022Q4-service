@@ -1,9 +1,9 @@
 import { Expose } from 'class-transformer';
 import { Entity, JoinTable, ManyToMany } from 'typeorm';
-import { AlbumEntity } from './album.entity';
-import { ArtistEntity } from './artist.entity';
-import { BaseEntity } from './entity';
-import { TrackEntity } from './track.entity';
+import { AlbumEntity } from '../album/album.entity';
+import { ArtistEntity } from '../artist/artist.entity';
+import { BaseEntity } from '../entity';
+import { TrackEntity } from '../track/track.entity';
 
 @Entity()
 export class FavoritesEntity extends BaseEntity {

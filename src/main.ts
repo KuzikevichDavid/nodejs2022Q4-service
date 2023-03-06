@@ -12,8 +12,6 @@ async function bootstrap() {
     bufferLogs: true,
   });
   const logger = app.get(LoggerService);
-  // const logger = new LoggerService();
-  // logger.
   app.useLogger(logger);
 
   process.on('uncaughtException', (error, origin) => {

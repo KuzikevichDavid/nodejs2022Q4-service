@@ -6,10 +6,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { TrackEntity } from 'src/utils/services/track.entity';
-import { TrackService } from 'src/utils/services/track.service';
+import { TrackEntity } from 'src/routes/track/track.entity';
 import EntityController from '../entity.controller';
 import { TrackDto } from './track.dto';
+import { TrackService } from './track.service';
 
 @Controller('track')
 export class TrackController extends EntityController<

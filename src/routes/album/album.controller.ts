@@ -2,10 +2,10 @@ import { Param } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { Controller, Post, Put } from '@nestjs/common';
-import { AlbumEntity } from '../../utils/services/album.entity';
-import { AlbumService } from '../../utils/services/album.service';
+import { AlbumService } from './album.service';
 import EntityController from '../entity.controller';
 import { AlbumDto } from './album.dto';
+import { AlbumEntity } from './album.entity';
 
 @Controller('album')
 export class AlbumController extends EntityController<

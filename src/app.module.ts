@@ -12,20 +12,20 @@ import { FavoritesController } from './routes/favs/favorites.controller';
 import { TrackController } from './routes/track/track.controller';
 import { UserController } from './routes/user/user.controller';
 import { AllExceptionsFilter } from './logging/allExceptionFilter';
-import { AlbumEntity } from './utils/services/album.entity';
-import { AlbumService } from './utils/services/album.service';
-import { ArtistEntity } from './utils/services/artist.entity';
-import { ArtistService } from './utils/services/artist.service';
-import { appDataSource } from './utils/services/db/dataSource';
-import { FavoritesEntity } from './utils/services/favorites.entity';
-import { FavoritesService } from './utils/services/favorites.service';
-import { TrackEntity } from './utils/services/track.entity';
-import { TrackService } from './utils/services/track.service';
-import { UserEntity } from './utils/services/user.entity';
-import { UserService } from './utils/services/user.service';
+import { AlbumService } from './routes/album/album.service';
+import { ArtistEntity } from './routes/artist/artist.entity';
+import { appDataSource } from './utils/db/dataSource';
+import { FavoritesEntity } from './routes/favs/favorites.entity';
+import { TrackEntity } from './routes/track/track.entity';
+import { UserEntity } from './routes/user/user.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DocModule } from './doc.module';
+import { AlbumEntity } from './routes/album/album.entity';
+import { ArtistService } from './routes/artist/artist.service';
+import { FavoritesService } from './routes/favs/favorites.service';
+import { TrackService } from './routes/track/track.service';
+import { UserService } from './routes/user/user.service';
 
 @Module({
   imports: [

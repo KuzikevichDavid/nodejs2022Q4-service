@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FavoritesDto, FavoritesType } from 'src/routes/favs/favorites.dto';
 import { TrackDto } from 'src/routes/track/track.dto';
 import { Repository } from 'typeorm';
-import { EntityService } from './entity.service';
-import { FavoritesService } from './favorites.service';
+import { EntityService } from '../entity.service';
+import { FavoritesService } from '../favs/favorites.service';
 import { TrackEntity } from './track.entity';
 
 @Injectable()

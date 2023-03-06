@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from 'src/routes/user/user.dto';
+import { Forbidden } from 'src/utils/errors/forbidden.error';
+import { compare, hash } from 'src/utils/hash';
 import { Repository } from 'typeorm';
-import { Forbidden } from '../errors/forbidden.error';
-import { compare, hash } from '../hash';
-import { Operation, EntityService } from './entity.service';
+import { EntityService, Operation } from '../entity.service';
 import { UserEntity } from './user.entity';
 
 @Injectable()

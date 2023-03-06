@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { BaseEntity } from './entity';
+import { BaseEntity } from '../entity';
 
 @Entity()
 export class UserEntity extends BaseEntity {
