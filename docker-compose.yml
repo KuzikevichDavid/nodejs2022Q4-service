@@ -2,6 +2,7 @@ version: '3.9'
 name: nodejs-rest-service
 services:
   app:
+    container_name: app
     build:
       context: .
       tags:
@@ -10,7 +11,6 @@ services:
       args:
         APP_WORKDIR: ${APP_WORKDIR}
         PORT: ${PORT}
-        DOC_PORT: ${DOC_PORT}
     networks:
       users-bridge:
     depends_on:
@@ -21,8 +21,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${PORT}
-      DOC_PORT: ${DOC_PORT}
-      #POSTGRES_HOST: ${DB_IP}
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       SSH_PRIVKEY: ${SSH_PRIVKEY}
       SSH_CERT: ${SSH_CERT}
@@ -30,14 +29,16 @@ services:
       LOG_LVL: ${LOG_LVL}
       LOG_SIZE: ${LOG_SIZE}
       LOG_PATH: ${LOG_PATH}
+      TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+      TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
     volumes:
       - ${APP_VOLUME}/src:${APP_WORKDIR}/src
       - ${APP_VOLUME}/logs:${APP_WORKDIR}/logs
     ports:
       - ${PORT}:${PORT}
-      - ${DOC_PORT}:${DOC_PORT}
     restart: on-failure
   postgres:
+    container_name: postgres
     build:
       dockerfile: ${BASE_DOCKERFILE}
       tags:

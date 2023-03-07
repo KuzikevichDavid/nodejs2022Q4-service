@@ -65,7 +65,7 @@ export class AuthService {
       expiresIn: process.env.TOKEN_EXPIRE_TIME,
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.SSH_CERT,
+      secret: process.env.SSH_PRIVKEY,
       expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
     });
 
