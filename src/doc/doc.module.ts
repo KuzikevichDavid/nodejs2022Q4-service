@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DocController } from './routes/doc.controller';
+import { DocController } from './doc.controller';
 
 @Module({ controllers: [DocController] })
 export class DocModule {}

@@ -1,10 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FavoritesDto, FavoritesType } from 'src/routes/favs/favorites.dto';
+import {
+  FavoritesDto,
+  FavoritesType,
+} from 'src/musicLibrary/favs/favorites.dto';
 import { NotFound } from 'src/utils/errors/notFound.error';
 import { idNotFound } from 'src/utils/replyMessages';
 import { Repository } from 'typeorm';
-import { AlbumService } from '../../routes/album/album.service';
+import { AlbumService } from '../album/album.service';
 import { ArtistService } from '../artist/artist.service';
 import { BaseEntity } from '../entity';
 import { EntityService, Operation } from '../entity.service';

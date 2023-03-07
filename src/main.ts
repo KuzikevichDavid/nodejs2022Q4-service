@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { config } from 'dotenv';
+import { exit } from 'process';
 import { AppModule } from './app.module';
 import { LoggerService } from './logging/loggerService';
 
@@ -16,6 +17,7 @@ async function bootstrap() {
 
   process.on('uncaughtException', (error, origin) => {
     logger.errorSync(error.message, error.stack, origin);
+    exit(1);
   });
 
   process.on('unhandledRejection', (reason, promise) => {

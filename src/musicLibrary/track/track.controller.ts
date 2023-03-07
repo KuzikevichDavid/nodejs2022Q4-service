@@ -6,7 +6,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { TrackEntity } from 'src/routes/track/track.entity';
+import { TrackEntity } from 'src/musicLibrary/track/track.entity';
 import EntityController from '../entity.controller';
 import { TrackDto } from './track.dto';
 import { TrackService } from './track.service';

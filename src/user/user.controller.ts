@@ -6,8 +6,8 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UserEntity } from 'src/routes/user/user.entity';
-import EntityController from '../entity.controller';
+import { UserEntity } from 'src/user/user.entity';
+import EntityController from '../musicLibrary/entity.controller';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 

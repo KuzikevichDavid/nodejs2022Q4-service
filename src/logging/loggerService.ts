@@ -31,7 +31,7 @@ export class LoggerService extends ConsoleLogger {
   private setFileLoggers() {
     return LoggerService.levelNames.map((levelName) => {
       const logger = new FileLogger(
-        `${process.env.LOG_PATH}/${levelName}/`, //path to where save loggin result
+        `${process.env.LOG_PATH}/${levelName}/`, //path to where save logging result
         levelName, //name of file where will be saved logging result
         +process.env.LOG_SIZE * 1000, // filesize
       );
@@ -56,14 +56,10 @@ export class LoggerService extends ConsoleLogger {
 
   error(message: any, ...optionalParams: any[]) {
     this.writeLog(this.levels.error, message, optionalParams);
-    super.error(message, optionalParams);
-    this.fileLoggers[this.levels.error].write(
-      JSON.stringify({ message, ...optionalParams }),
-    );
   }
 
   errorSync(message: any, ...optionalParams: any[]) {
-    //super.error(message, ...optionalParams);
+    super.error(message, ...optionalParams);
     this.fileLoggers[this.levels.error].writeSync(
       JSON.stringify({ message, ...optionalParams }),
     );

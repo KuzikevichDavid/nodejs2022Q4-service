@@ -1,10 +1,10 @@
 import { config } from 'dotenv';
-import { AlbumEntity } from 'src/routes/album/album.entity';
+import { AlbumEntity } from 'src/musicLibrary/album/album.entity';
 import { DataSource } from 'typeorm';
-import { ArtistEntity } from '../../routes/artist/artist.entity';
-import { FavoritesEntity } from '../../routes/favs/favorites.entity';
-import { TrackEntity } from '../../routes/track/track.entity';
-import { UserEntity } from '../../routes/user/user.entity';
+import { ArtistEntity } from '../../musicLibrary/artist/artist.entity';
+import { FavoritesEntity } from '../../musicLibrary/favs/favorites.entity';
+import { TrackEntity } from '../../musicLibrary/track/track.entity';
+import { UserEntity } from '../../user/user.entity';
 import { init1676519107193 } from './migrations/1676519107193-init';
 import { updateUserEntity1677507552283 } from './migrations/1677507552283-updateUserEntity';
 

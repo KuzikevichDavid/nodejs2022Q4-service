@@ -5,6 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ServerResponse } from 'http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { LoggerService } from './loggerService';
@@ -33,13 +34,17 @@ export class LoggingInterceptor<T> implements NestInterceptor<T, Response<T>> {
     const method = httpAdapter.getRequestMethod(req);
     return next.handle().pipe(
       map((data) => {
+        let responseData = data;
+        if (data instanceof ServerResponse) {
+          responseData = '{file stream}';
+        }
         const res = ctx.getResponse();
         this.logger.log({
           method,
           path,
           reqBody,
           statusCode: res.statusCode,
-          response: data,
+          response: responseData,
         });
         return data;
       }),

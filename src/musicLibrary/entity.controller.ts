@@ -13,7 +13,7 @@ import {
 import { BadRequest } from 'src/utils/errors/badRequest.error';
 import { Forbidden } from 'src/utils/errors/forbidden.error';
 import { NotFound } from 'src/utils/errors/notFound.error';
-import { BaseEntity } from 'src/routes/entity';
+import { BaseEntity } from 'src/musicLibrary/entity';
 import { EntityService } from './entity.service';
 
 @UseInterceptors(ClassSerializerInterceptor)

@@ -12,7 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { NotFound } from 'src/utils/errors/notFound.error';
-import { FavoritesEntity } from 'src/routes/favs/favorites.entity';
+import { FavoritesEntity } from 'src/musicLibrary/favs/favorites.entity';
 import { FavoritesDto, FavoritesType } from './favorites.dto';
 import { FavoritesService } from './favorites.service';
 

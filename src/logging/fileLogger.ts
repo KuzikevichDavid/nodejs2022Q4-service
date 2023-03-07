@@ -1,4 +1,3 @@
-import { W_OK } from 'constants';
 import {
   closeSync,
   Dirent,
@@ -11,13 +10,10 @@ import {
   accessSync,
   Dir,
 } from 'fs';
-import { access, appendFile, mkdir, stat } from 'fs/promises';
-import * as os from 'os';
+import { appendFile, stat } from 'fs/promises';
+import { EOL } from 'os';
 import { join } from 'path';
 
-const { EOL } = os;
-
-//@Injectable({ scope: Scope.DEFAULT })
 export class FileLogger {
   protected fileNum: number;
   constructor(
@@ -26,16 +22,6 @@ export class FileLogger {
     protected readonly size: number,
   ) {
     this.fileNum = this.searchOldFiles();
-  }
-
-  private async makeDir() {
-    try {
-      await access(this.path, W_OK);
-    } catch (err: unknown) {
-      await mkdir(this.path, { recursive: true }).catch((err) => {
-        this.writeSync(JSON.stringify(err));
-      });
-    }
   }
 
   private makeDirSync() {
@@ -63,11 +49,11 @@ export class FileLogger {
         const fileName = this.genFileName(--count);
         const fileStat = statSync(join(this.path, fileName));
         if (fileStat.size < this.size) {
-          return count; //{ fileName, num: count };
+          return count;
         }
-        return ++count; //{ fileName: this.genFileName(++count), num: count};
+        return ++count;
       }
-      return count; //{ fileName: this.genFileName(count), num: count};
+      return count;
     } catch (err) {
       this.writeSync(JSON.stringify(err));
     } finally {
