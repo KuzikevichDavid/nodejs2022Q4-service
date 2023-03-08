@@ -1,48 +1,32 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AlbumController } from './routes/album/album.controller';
-import { ArtistController } from './routes/artist/artist.controller';
-import { DocController } from './routes/doc.controller';
-import { FavoritesController } from './routes/favs/favorites.controller';
-import { TrackController } from './routes/track/track.controller';
-import { UserController } from './routes/user/user.controller';
-import { AlbumEntity } from './utils/services/album.entity';
-import { AlbumService } from './utils/services/album.service';
-import { ArtistEntity } from './utils/services/artist.entity';
-import { ArtistService } from './utils/services/artist.service';
-import { appDataSource } from './utils/services/db/dataSource';
-import { FavoritesEntity } from './utils/services/favorites.entity';
-import { FavoritesService } from './utils/services/favorites.service';
-import { TrackEntity } from './utils/services/track.entity';
-import { TrackService } from './utils/services/track.service';
-import { UserEntity } from './utils/services/user.entity';
-import { UserService } from './utils/services/user.service';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { LoggingInterceptor } from './logging/loggingInterceptor';
+import { LoggerModule } from './logging/log.module';
+import { AllExceptionsFilter } from './logging/allExceptionFilter';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { DocModule } from './doc/doc.module';
+import { MusicLibraryModule } from './musicLibrary/musicLibrary.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(appDataSource.options),
-    TypeOrmModule.forFeature([
-      UserEntity,
-      TrackEntity,
-      ArtistEntity,
-      AlbumEntity,
-      FavoritesEntity,
-    ]),
-  ],
-  controllers: [
-    UserController,
-    TrackController,
-    ArtistController,
-    AlbumController,
-    FavoritesController,
-    DocController,
-  ],
+  imports: [AuthModule, LoggerModule, DocModule, MusicLibraryModule],
+  controllers: [AppController],
   providers: [
-    UserService,
-    TrackService,
-    ArtistService,
-    AlbumService,
-    FavoritesService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    AppService,
   ],
 })
 export class AppModule {}

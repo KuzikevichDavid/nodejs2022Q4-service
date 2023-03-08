@@ -20,14 +20,14 @@ npm install
 
 ## Running application
 
-Go to `.env` and change values of environment variables if needed. There are default values.
+Go to `.env` file and change values of environment variables if needed. There are default values.
 
 To run application type:
 ```bash
 docker compose up -d
 ```
 
-After starting the app on contaner you will see in docker image logs:
+After starting the `app` on contaner you will see in docker image logs:
 ```
 Starting compilation in watch mode...
 ``` 
@@ -35,9 +35,9 @@ You have to wait until compilation is finished. When it finish you'll see in doc
 ```
 [Nest] LOG [NestApplication] Nest application successfully started
 ```
-After than you can run tests or work with API. 
+After than you can run tests or work with API in browser or Postman. 
 
-To view the API documentation, type http://localhost:4000/doc/ in browser. To test API in `Swagger Editor`, type https://editor.swagger.io/?url=https://localhost:4001/doc/file in browser.
+To view the API documentation, type http://localhost:4000/doc/ in browser.
 
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
