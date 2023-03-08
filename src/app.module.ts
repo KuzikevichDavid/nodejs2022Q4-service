@@ -8,7 +8,7 @@ import { AllExceptionsFilter } from './logging/allExceptionFilter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DocModule } from './doc/doc.module';
-import { MusicLibraryModule } from './musicLibrary/music.module';
+import { MusicLibraryModule } from './musicLibrary/musicLibrary.module';
 
 @Module({
   imports: [AuthModule, LoggerModule, DocModule, MusicLibraryModule],
