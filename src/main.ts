@@ -1,14 +1,29 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { config } from 'dotenv';
-import { readFileSync } from 'fs';
+import { exit } from 'process';
 import { AppModule } from './app.module';
-import { DocModule } from './doc.module';
+import { LoggerService } from './logging/loggerService';
 
 config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    bufferLogs: true,
+  });
+  const logger = app.get(LoggerService);
+  app.useLogger(logger);
+
+  process.on('uncaughtException', (error, origin) => {
+    logger.errorSync(error.message, error.stack, origin);
+    exit(1);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.errorSync('unhandledRejection', reason, promise);
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -16,16 +31,5 @@ async function bootstrap() {
     }),
   );
   await app.listen(+process.env.PORT || 4000);
-
-  const options = {
-    key: readFileSync(process.env.SSH_PRIVKEY || 'localhost-privkey.pem'),
-    cert: readFileSync(process.env.SSH_CERT || 'localhost-cert.pem'),
-  };
-
-  const doc = await NestFactory.create(DocModule, {
-    httpsOptions: options,
-    cors: true,
-  });
-  await doc.listen(+process.env.DOC_PORT || 4001);
 }
 bootstrap();

@@ -2,23 +2,17 @@ version: '3.9'
 name: nodejs-rest-service
 services:
   app:
+    container_name: app
     build:
       context: .
       tags:
-      - "${REPOSITORY}:nestjs-app"
+        - "${REPOSITORY}:nestjs-app"
       dockerfile: ${APP_DOCKERFILE}
       args:
         APP_WORKDIR: ${APP_WORKDIR}
         PORT: ${PORT}
-        DOC_PORT: ${DOC_PORT}
     networks:
       users-bridge:
-        ipv4_address: ${NETWORK_APP_IP}
-    secrets:
-      - source: privkey
-        target: ${SSH_PRIVKEY}
-      - source: cert
-        target: ${SSH_CERT}
     depends_on:
       postgres:
         condition: service_healthy
@@ -27,30 +21,34 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${PORT}
-      DOC_PORT: ${DOC_PORT}
-      POSTGRES_HOST: ${DB_IP}
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      SSH_PRIVKEY: /run/secrets/${SSH_PRIVKEY}
-      SSH_CERT: /run/secrets/${SSH_CERT}
+      SSH_PRIVKEY: ${SSH_PRIVKEY}
+      SSH_CERT: ${SSH_CERT}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS}
+      LOG_LVL: ${LOG_LVL}
+      LOG_SIZE: ${LOG_SIZE}
+      LOG_PATH: ${LOG_PATH}
+      TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+      TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
     volumes:
       - ${APP_VOLUME}/src:${APP_WORKDIR}/src
+      - ${APP_VOLUME}/logs:${APP_WORKDIR}/logs
     ports:
       - ${PORT}:${PORT}
-      - ${DOC_PORT}:${DOC_PORT}
-    restart: unless-stopped
+    restart: on-failure
   postgres:
-    build: 
+    container_name: postgres
+    build:
       dockerfile: ${BASE_DOCKERFILE}
       tags:
-      - "${REPOSITORY}:postgres-db"
+        - "${REPOSITORY}:postgres-db"
     command:
       - "postgres"
       - "-c"
       - "logging_collector=on"
     networks:
       users-bridge:
-        ipv4_address: ${DB_IP}
     environment:
       POSTGRES_DB: ${POSTGRES_DATABASE}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -74,15 +72,5 @@ services:
 networks:
   users-bridge:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: ${NETWORK_SUBNET}
-          gateway: ${NETWORK_GATEWAY}
-secrets:
-  privkey:
-    file: ${SSH_PRIVKEY} 
-  cert:
-    file: ${SSH_CERT} 
 volumes:
   pg_data:
